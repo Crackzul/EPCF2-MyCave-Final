@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Tableau de bord – MyCAVE</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="dashboard">
+  <header class="dashboard-header">
+    <div class="header-content">
+      <img src="assets/img/logo-large.png" alt="myCAVE logo" class="logo">
+      <div class="header-text">
+        <h1>Bienvenue dans votre cave Didier</h1>
+        <p>Elle contient déjà <span id="bottle-count">12</span> bouteilles</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-primary" onclick="window.location.href='add.html'">Ajouter une nouvelle bouteille</button>
+        <button class="btn-outline" onclick="window.location.href='index.html'">Déconnexion</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard-main">
+    <div class="background-cave">
+      <img src="assets/img/pexels-finn-ruijter-2153149058-32906672.jpg" alt="Image cave" class="cave-image">
+    </div>
+    <div class="wines-container" id="wines-container">
+      
+      <!-- Bouteille 1 -->
+      <div class="wine-card">
+        <div class="wine-image">
+          <img src="assets/img/generic.jpg" alt="Château Margaux">
+        </div>
+        <div class="wine-info">
+          <h3>Château Margaux</h3>
+          <div class="wine-details">
+            <span class="year">2015</span>
+            <span class="grape">Cabernet Sauvignon</span>
+            <span class="region">Bordeaux, France</span>
+          </div>
+          <p class="wine-description">Un grand cru exceptionnel avec des arômes complexes de fruits noirs et d'épices...AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</p>
+          <div class="wine-actions">
+            <button class="btn-icon" title="Modifier"><img src="assets/img/pen-to-square.svg" alt=""></button>
+            <button class="btn-icon" title="Supprimer"><img src="assets/img/trash-arrow-up.svg" alt=""></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bouteille 2 -->
+      <div class="wine-card">
+        <div class="wine-image">
+          <img src="assets/img/rex_hill.jpg" alt="Domaine Romanée-Conti">
+        </div>
+        <div class="wine-info">
+          <h3>Domaine Romanée-Conti</h3>
+          <div class="wine-details">
+            <span class="year">2018</span>
+            <span class="grape">Pinot Noir</span>
+            <span class="region">Bourgogne, France</span>
+          </div>
+          <p class="wine-description">Though soft and rounded in texture, the body of this wine is full and rich and oh-so-appealing. This delivery is even more impressive when one takes note of the tender tannins that leave the taste buds wholly satisfied.</p>
+          <div class="wine-actions">
+            <button class="btn-icon" title="Modifier"><img src="assets/img/pen-to-square.svg" alt=""></button>
+            <button class="btn-icon" title="Supprimer"><img src="assets/img/trash-arrow-up.svg" alt=""></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bouteille 3 -->
+      <div class="wine-card">
+        <div class="wine-image">
+          <img src="assets/img/saint_cosme.jpg" alt="Barolo Brunate">
+        </div>
+        <div class="wine-info">
+          <h3>Barolo Brunate</h3>
+          <div class="wine-details">
+            <span class="year">2016</span>
+            <span class="grape">Nebbiolo</span>
+            <span class="region">Piémont, Italie</span>
+          </div>
+          <p class="wine-description">Un Barolo puissant et élégant du Piémont avec une structure tannique remarquable...</p>
+          <div class="wine-actions">
+            <button class="btn-icon" title="Modifier"><img src="assets/img/pen-to-square.svg" alt=""></button>
+            <button class="btn-icon" title="Supprimer"><img src="assets/img/trash-arrow-up.svg" alt=""></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bouteille 4 -->
+      <div class="wine-card">
+        <div class="wine-image">
+          <img src="assets/img/viticcio.jpg" alt="Chablis Grand Cru">
+        </div>
+        <div class="wine-info">
+          <h3>Chablis Grand Cru</h3>
+          <div class="wine-details">
+            <span class="year">2019</span>
+            <span class="grape">Chardonnay</span>
+            <span class="region">Bourgogne, France</span>
+          </div>
+          <p class="wine-description">Un chardonnay minéral et racé de Chablis aux notes iodées caractéristiques...</p>
+          <div class="wine-actions">
+            <button class="btn-icon" title="Modifier"><img src="assets/img/pen-to-square.svg" alt=""></button>
+            <button class="btn-icon" title="Supprimer"><img src="assets/img/trash-arrow-up.svg" alt=""></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bouteille 5 -->
+      <div class="wine-card">
+        <div class="wine-image">
+          <img src="assets/img/lan_rioja.jpg" alt="Châteauneuf-du-Pape">
+        </div>
+        <div class="wine-info">
+          <h3>Châteauneuf-du-Pape</h3>
+          <div class="wine-details">
+            <span class="year">2017</span>
+            <span class="grape">Grenache, Syrah</span>
+            <span class="region">Vallée du Rhône, France</span>
+          </div>
+          <p class="wine-description">Un assemblage puissant et généreux du Rhône méridional aux arômes de garrigue...</p>
+          <div class="wine-actions">
+           <button class="btn-icon" title="Modifier"><img src="assets/img/pen-to-square.svg" alt=""></button>
+            <button class="btn-icon" title="Supprimer"><img src="assets/img/trash-arrow-up.svg" alt=""></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bouteille 6 -->
+      <div class="wine-card">
+        <div class="wine-image">
+          <img src="assets/img/le_doyenne.jpg" alt="Sancerre">
+        </div>
+        <div class="wine-info">
+          <h3>Sancerre</h3>
+          <div class="wine-details">
+            <span class="year">2020</span>
+            <span class="grape">Sauvignon Blanc</span>
+            <span class="region">Loire, France</span>
+          </div>
+          <p class="wine-description">Un sauvignon blanc vif et élégant de Loire aux arômes d'agrumes et de pierre à fusil...</p>
+          <div class="wine-actions">
+            <button class="btn-icon" title="Modifier"><img src="assets/img/pen-to-square.svg" alt=""></button>
+            <button class="btn-icon" title="Supprimer"><img src="assets/img/trash-arrow-up.svg" alt=""></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bouteille 7 -->
+      <div class="wine-card">
+        <div class="wine-image">
+          <img src="assets/img/lurton-pinot-gris.jpg" alt="Rioja Reserva">
+        </div>
+        <div class="wine-info">
+          <h3>Rioja Reserva</h3>
+          <div class="wine-details">
+            <span class="year">2014</span>
+            <span class="grape">Tempranillo</span>
+            <span class="region">Rioja, Espagne</span>
+          </div>
+          <p class="wine-description">Un tempranillo espagnol élevé en fût avec des notes de cuir et de vanille...</p>
+          <div class="wine-actions">
+            <button class="btn-icon" title="Modifier"><img src="assets/img/pen-to-square.svg" alt=""></button>
+            <button class="btn-icon" title="Supprimer"><img src="assets/img/trash-arrow-up.svg" alt=""></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bouteille 8 -->
+      <div class="wine-card">
+        <div class="wine-image">
+          <img src="assets/img/margerum.jpg" alt="Amarone della Valpolicella">
+        </div>
+        <div class="wine-info">
+          <h3>Amarone della Valpolicella</h3>
+          <div class="wine-details">
+            <span class="year">2016</span>
+            <span class="grape">Corvina, Rondinella</span>
+            <span class="region">Vénétie, Italie</span>
+          </div>
+          <p class="wine-description">Un vin italien puissant issu de raisins passerillés aux arômes concentrés...</p>
+          <div class="wine-actions">
+            <button class="btn-icon" title="Modifier"><img src="assets/img/pen-to-square.svg" alt=""></button>
+            <button class="btn-icon" title="Supprimer"><img src="assets/img/trash-arrow-up.svg" alt=""></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bouteille 9 -->
+      <div class="wine-card">
+        <div class="wine-image">
+          <img src="assets/img/morizottes.jpg" alt="Mosel Riesling">
+        </div>
+        <div class="wine-info">
+          <h3>Mosel Riesling</h3>
+          <div class="wine-details">
+            <span class="year">2019</span>
+            <span class="grape">Riesling</span>
+            <span class="region">Moselle, Allemagne</span>
+          </div>
+          <p class="wine-description">Un riesling allemand délicat aux notes florales et minérales caractéristiques...</p>
+          <div class="wine-actions">
+            <button class="btn-icon" title="Modifier"><img src="assets/img/pen-to-square.svg" alt=""></button>
+            <button class="btn-icon" title="Supprimer"><img src="assets/img/trash-arrow-up.svg" alt=""></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bouteille 10 -->
+      <div class="wine-card">
+        <div class="wine-image">
+          <img src="assets/img/block_nine.jpg" alt="Pouilly-Fumé">
+        </div>
+        <div class="wine-info">
+          <h3>Pouilly-Fumé</h3>
+          <div class="wine-details">
+            <span class="year">2020</span>
+            <span class="grape">Sauvignon Blanc</span>
+            <span class="region">Loire, France</span>
+          </div>
+          <p class="wine-description">Un sauvignon blanc fumé de Loire aux arômes de pierre à fusil et d'agrumes...</p>
+          <div class="wine-actions">
+            <button class="btn-icon" title="Modifier"><img src="assets/img/pen-to-square.svg" alt=""></button>
+            <button class="btn-icon" title="Supprimer"><img src="assets/img/trash-arrow-up.svg" alt=""></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bouteille 11 -->
+      <div class="wine-card">
+        <div class="wine-image">
+          <img src="assets/img/bodega_lurton.jpg" alt="Côtes du Rhône Villages">
+        </div>
+        <div class="wine-info">
+          <h3>Côtes du Rhône Villages</h3>
+          <div class="wine-details">
+            <span class="year">2018</span>
+            <span class="grape">Syrah, Grenache</span>
+            <span class="region">Vallée du Rhône, France</span>
+          </div>
+          <p class="wine-description">Un assemblage rhodanien équilibré aux arômes de fruits rouges et d'épices douces...</p>
+          <div class="wine-actions">
+            <button class="btn-icon" title="Modifier"><img src="assets/img/pen-to-square.svg" alt=""></button>
+            <button class="btn-icon" title="Supprimer"><img src="assets/img/trash-arrow-up.svg" alt=""></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bouteille 12 -->
+      <div class="wine-card">
+        <div class="wine-image">
+          <img src="assets/img/bouscat.jpg" alt="Saint-Émilion Grand Cru">
+        </div>
+        <div class="wine-info">
+          <h3>Saint-Émilion Grand Cru</h3>
+          <div class="wine-details">
+            <span class="year">2015</span>
+            <span class="grape">Merlot, Cabernet Franc</span>
+            <span class="region">Bordeaux, France</span>
+          </div>
+          <p class="wine-description">Un grand cru de la rive droite bordelaise aux tanins soyeux et aux arômes complexes...</p>
+          <div class="wine-actions">
+            <button class="btn-icon" title="Modifier"><img src="assets/img/pen-to-square.svg" alt=""></button>
+            <button class="btn-icon" title="Supprimer"><img src="assets/img/trash-arrow-up.svg" alt=""></button>
+          </div>
+        </div>
+      </div>
+
+    </div> <!-- FIN du wines-container - TOUTES les bouteilles sont dedans ! -->
+  </main>
+
+  <footer class="dashboard-footer">
+    <p>© 2025 Marty Didier tous droits réservés</p>
+  </footer>
+
+  <script>
+    function updateBottleCount() {
+      const wineCards = document.querySelectorAll('.wine-card');
+      const count = wineCards.length;
+      const countElement = document.getElementById('bottle-count');
+      if (countElement) {
+        countElement.textContent = count;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      updateBottleCount();
+    });
+  </script>
+
+</body>
+</html>

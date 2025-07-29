@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter un vin – MyCave</title>
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" />
+</head>
+<body class="add-wine">
+    <header class="add-wine-header">
+        <div class="header-content">
+            <img src="{{ asset('assets/img/logo-large.png') }}" alt="myCAVE logo" class="logo">
+            <div class="header-text">
+                <h1>Ajouter une nouvelle bouteille</h1>
+                <p>Complétez les informations de votre vin</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="add-wine-main">
+        <div class="background-form">
+            <img src="{{ asset('assets/img/pexels-finn-ruijter-2153149058-32906672.jpg') }}" alt="Image cave" class="cave-image">
+        </div>
+        
+        <div class="add-wine-modal">
+            <div class="modal-header">
+                <h2>Nouvelle bouteille</h2>
+                <button class="btn-back" onclick="window.location.href='{{ path('app_dashboard') }}'">
+                    ← Retour
+                </button>
+            </div>
+            
+            <form class="add-wine-form" method="POST" action="{{ path('app_add_wine') }}">
+                <div class="form-group">
+                    <label for="name">Nom du vin</label>
+                    <input type="text" id="name" name="name" required placeholder="Ex: Château Margaux">
+                </div>
+                
+                <div class="form-group">
+                    <label for="year">Millésime</label>
+                    <input type="number" id="year" name="year" required placeholder="Ex: 2015" min="1900" max="2030">
+                </div>
+                
+                <div class="form-group">
+                    <label for="country">Pays</label>
+                    <input type="text" id="country" name="country" required placeholder="Ex: France">
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" placeholder="Notes sur le vin, cépages, etc."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="price">Prix (€)</label>
+                    <input type="number" id="price" name="price" step="0.01" required placeholder="Ex: 45.50">
+                </div>
+                
+                <button type="submit" class="btn-submit">Ajouter le vin</button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="add-wine-footer">
+        <p>© 2025 MyCave - Votre cave à vin digitale</p>
+    </footer>
+</body>
+</html> 
