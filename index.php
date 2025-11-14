@@ -82,5 +82,5 @@ $base_url = "$protocol://$host$base_dir/";
     <p>&copy; <?= date('Y') ?> MyCAVE. Tous droits réservés.</p>
   </footer>
 
-</body>
+  </body>
 </html>

@@ -28,9 +28,9 @@ $wineCount = $wine->countByUserId($user['id']);
         <button class="btn-primary" onclick="window.location.href='add-wine.php'">
           Ajouter une nouvelle bouteille
         </button>
-        <button class="btn-outline" onclick="logout()">
+        <a href="logout.php" class="btn-outline">
           Déconnexion
-        </button>
+        </a>
       </div>
     </div>
   </header>
@@ -169,22 +169,6 @@ $wineCount = $wine->countByUserId($user['id']);
       document.getElementById('bottle-count').textContent = count;
     }
 
-    // Déconnexion
-    async function logout() {
-      try {
-        const formData = new FormData();
-        formData.append('action', 'logout');
-        
-        await fetch('api/auth.php', {
-          method: 'POST',
-          body: formData
-        });
-        
-        window.location.href = 'index.php';
-      } catch (error) {
-        window.location.href = 'index.php';
-      }
-    }
 
     // Afficher un message d'erreur
     function showError(message) {
