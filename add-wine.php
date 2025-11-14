@@ -146,26 +146,17 @@ $wineCount = $wine->countByUserId($user['id']);
         let response;
         
         if (isEdit) {
-          // Mode édition - utiliser PUT avec JSON pour les données texte
-          const textData = {
-            id: wineData.id,
-            name: formData.get('name'),
-            year: formData.get('year'),
-            grapes: formData.get('grapes'),
-            country: formData.get('country'),
-            region: formData.get('region'),
-            description: formData.get('description')
-          };
-          
+          // En mode édition, on utilise POST mais on simule un PUT
+          // pour que le serveur puisse gérer le multipart/form-data
+          formData.append('_method', 'PUT');
+          formData.append('id', wineData.id);
+
           response = await fetch('api/wines.php', {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(textData)
+            method: 'POST', // Toujours POST pour envoyer des fichiers
+            body: formData
           });
         } else {
-          // Mode création - utiliser POST avec FormData pour gérer l'upload
+          // Mode création
           response = await fetch('api/wines.php', {
             method: 'POST',
             body: formData

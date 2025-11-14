@@ -1,4 +1,8 @@
 <?php
+// Augmenter les limites pour le téléversement de fichiers
+ini_set('upload_max_filesize', '64M');
+ini_set('post_max_size', '64M');
+
 header('Content-Type: application/json');
 require_once '../includes/session.php';
 require_once '../classes/Wine.php';
@@ -18,7 +22,12 @@ switch($method) {
         getWines();
         break;
     case 'POST':
-        addWine();
+        // Gérer la surcharge de méthode pour les mises à jour avec fichiers
+        if (isset($_POST['_method']) && $_POST['_method'] === 'PUT') {
+            updateWine();
+        } else {
+            addWine();
+        }
         break;
     case 'PUT':
         updateWine();
@@ -97,12 +106,10 @@ function addWine() {
 function updateWine() {
     global $user;
     
-    // Récupérer les données JSON
-    $json = file_get_contents('php://input');
-    $data = json_decode($json, true);
-    
-    $wine_id = $data['id'] ?? '';
-    
+    // Les données de formulaire multipart ne sont pas dans php://input
+    // On utilise $_POST pour les champs et $_FILES pour les fichiers.
+    $wine_id = $_POST['id'] ?? '';
+
     if (empty($wine_id)) {
         http_response_code(400);
         echo json_encode(['error' => 'ID de la bouteille requis']);
@@ -122,19 +129,36 @@ function updateWine() {
         echo json_encode(['error' => 'Non autorisé']);
         return;
     }
-    
-    // Mettre à jour les champs
-    $wine->name = $data['name'] ?? $wine->name;
-    $wine->year = $data['year'] ?? $wine->year;
-    $wine->grapes = $data['grapes'] ?? $wine->grapes;
-    $wine->country = $data['country'] ?? $wine->country;
-    $wine->region = $data['region'] ?? $wine->region;
-    $wine->description = $data['description'] ?? $wine->description;
-    
+
+    // Gérer la mise à jour de l'image si une nouvelle est fournie
+    if (isset($_FILES['picture']) && $_FILES['picture']['error'] === 0) {
+        $new_picture = uploadImage($_FILES['picture']);
+        if ($new_picture) {
+            // Supprimer l'ancienne image si elle existe et est différente
+            if ($wine->picture && file_exists('../uploads/' . $wine->picture)) {
+                unlink('../uploads/' . $wine->picture);
+            }
+            $wine->picture = $new_picture;
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => 'Erreur lors de l\'upload de la nouvelle image']);
+            return;
+        }
+    }
+
+    // Mettre à jour les autres champs
+    $wine->name = $_POST['name'] ?? $wine->name;
+    $wine->year = $_POST['year'] ?? $wine->year;
+    $wine->grapes = $_POST['grapes'] ?? $wine->grapes;
+    $wine->country = $_POST['country'] ?? $wine->country;
+    $wine->region = $_POST['region'] ?? $wine->region;
+    $wine->description = $_POST['description'] ?? $wine->description;
+
     if ($wine->update()) {
         echo json_encode([
             'success' => true,
-            'message' => 'Bouteille mise à jour avec succès'
+            'message' => 'Bouteille mise à jour avec succès',
+            'wine' => [ 'id' => $wine->id, 'picture' => $wine->picture ]
         ]);
     } else {
         http_response_code(500);

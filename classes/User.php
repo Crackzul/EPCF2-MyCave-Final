@@ -3,7 +3,7 @@ require_once 'config/database.php';
 
 class User {
     private $conn;
-    private $table_name = "users";
+    private $table_name = "user";
 
     public $id;
     public $email;
@@ -18,7 +18,7 @@ class User {
 
     public function create() {
         $query = "INSERT INTO " . $this->table_name . " 
-                  SET email=:email, password=:password, name=:name, role=:role";
+                  SET email1=:email, password1=:password, username=:name, roles=:role";
 
         $stmt = $this->conn->prepare($query);
         $this->password = password_hash($this->password, PASSWORD_DEFAULT);
@@ -36,9 +36,9 @@ class User {
     }
 
     public function login($email, $password) {
-        $query = "SELECT id, email, password, name, role 
+        $query = "SELECT id, email1, password1, username, roles 
                   FROM " . $this->table_name . " 
-                  WHERE email = :email LIMIT 1";
+                  WHERE email1 = :email LIMIT 1";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":email", $email);
@@ -47,11 +47,11 @@ class User {
         if($stmt->rowCount() > 0) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             
-            if(password_verify($password, $row['password'])) {
+            if(password_verify($password, $row['password1'])) {
                 $this->id = $row['id'];
-                $this->email = $row['email'];
-                $this->name = $row['name'];
-                $this->role = $row['role'];
+                $this->email = $row['email1'];
+                $this->name = $row['username'];
+                $this->role = $row['roles'];
                 return true;
             }
         }
@@ -59,7 +59,7 @@ class User {
     }
 
     public function getUserById($id) {
-        $query = "SELECT id, email, name, role, created_at 
+        $query = "SELECT id, email1, username, roles, created_at 
                   FROM " . $this->table_name . " 
                   WHERE id = :id LIMIT 1";
 

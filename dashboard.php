@@ -96,24 +96,32 @@ $wineCount = $wine->countByUserId($user['id']);
       container.innerHTML = wines.map(wine => createWineCard(wine)).join('');
     }
 
+    // Échapper les caractères HTML pour la sécurité
+    function escapeHTML(str) {
+      const p = document.createElement('p');
+      p.appendChild(document.createTextNode(str));
+      return p.innerHTML;
+    }
+
     // Créer une carte de vin
     function createWineCard(wine) {
-      const imageUrl = wine.picture ? `uploads/${wine.picture}` : 'assets/img/default-wine.jpg';
-      
+      // Construire l'URL de l'image en tenant compte des anciens et nouveaux vins
+      const imageUrl = wine.picture ? `uploads/${wine.picture}` : '';
+
       return `
         <div class="wine-card" data-id="${wine.id}">
           <div class="wine-image">
-            <img src="${imageUrl}" alt="${wine.name}" onerror="this.src='assets/img/default-wine.jpg'">
+            <img src="${imageUrl}" alt="${escapeHTML(wine.name)}" onerror="this.style.display='none'">
           </div>
           <div class="wine-info">
-            <h3>${wine.name}</h3>
+            <h3>${escapeHTML(wine.name)}</h3>
             <div class="wine-details">
               <span><strong>Année:</strong> ${wine.year}</span>
-              <span><strong>Cépage:</strong> ${wine.grapes}</span>
-              <span><strong>Pays:</strong> ${wine.country}</span>
-              <span><strong>Région:</strong> ${wine.region}</span>
+              <span><strong>Cépage:</strong> ${escapeHTML(wine.grapes)}</span>
+              <span><strong>Pays:</strong> ${escapeHTML(wine.country)}</span>
+              <span><strong>Région:</strong> ${escapeHTML(wine.region)}</span>
             </div>
-            <div class="wine-description">${wine.description}</div>
+            <div class="wine-description">${escapeHTML(wine.description)}</div>
             <div class="wine-actions">
               <button class="btn-icon" onclick="editWine(${wine.id})" title="Modifier">
                 ✏️
@@ -172,9 +180,9 @@ $wineCount = $wine->countByUserId($user['id']);
           body: formData
         });
         
-        window.location.href = 'login.php';
+        window.location.href = 'index.php';
       } catch (error) {
-        window.location.href = 'login.php';
+        window.location.href = 'index.php';
       }
     }
 

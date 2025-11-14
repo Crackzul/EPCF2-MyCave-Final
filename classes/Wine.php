@@ -1,9 +1,9 @@
 <?php
-require_once 'config/database.php';
+require_once __DIR__ . '/../config/database.php';
 
 class Wine {
     private $conn;
-    private $table_name = "wines";
+    private $table_name = "wine";
 
     public $id;
     public $user_id;
