@@ -33,7 +33,7 @@ INSERT INTO users (email, password, name, role) VALUES
 ('didier@mycave.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Didier Martin', 'user');
 -- Mot de passe par défaut : "password"
 
--- Vins d'exemple pour Didier
+-- Vins d'exemple
 INSERT INTO wines (user_id, name, year, grapes, country, region, description) VALUES 
 (2, 'Château Margaux', 2015, 'Cabernet Sauvignon, Merlot', 'France', 'Bordeaux', 'Un grand cru exceptionnel avec des arômes complexes de fruits rouges et d\'épices. Parfait pour les grandes occasions.'),
 (2, 'Domaine de la Côte', 2018, 'Pinot Noir', 'France', 'Bourgogne', 'Un pinot noir élégant aux notes de cerise et de sous-bois. Idéal avec les viandes rouges.'),

@@ -16,7 +16,23 @@ class User {
         $this->conn = $database->getConnection();
     }
 
+    public function emailExists($email) {
+        $query = "SELECT id FROM " . $this->table_name . " 
+                  WHERE email1 = :email LIMIT 1";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":email", $email);
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
+    }
+
     public function create() {
+        // Vérifier si l'email existe déjà
+        if ($this->emailExists($this->email)) {
+            return false;
+        }
+
         $query = "INSERT INTO " . $this->table_name . " 
                   SET email1=:email, password1=:password, username=:name, roles=:role";
 
