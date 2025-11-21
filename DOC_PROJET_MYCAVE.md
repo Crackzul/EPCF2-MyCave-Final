@@ -8,6 +8,14 @@ Ce document décrit le projet MyCave (gestion de cave à vin), ses objectifs, so
 
 ## 1. Présentation générale du projet
 
+MyCave est une application web qui permet à un utilisateur authentifié de gérer sa cave à vin personnelle. L’objectif est de centraliser au même endroit la liste de ses bouteilles, leurs caractéristiques (nom, domaine, millésime, région, couleur, etc.) et une photo illustrative, afin de faciliter le suivi de son stock au quotidien. Ce projet a été réalisé dans le cadre de ma formation **Développeur Web et Web Mobile (DWWM)** et constitue un support concret pour mettre en pratique les notions de front-end, de back-end et de base de données.
+
+Sur le plan pédagogique, MyCave m’a permis de travailler sur l’ensemble de la chaîne d’une application web dynamique : conception de la base MySQL, création de pages PHP, gestion des sessions et de l’authentification, mise en place d’un CRUD complet sur les vins, et intégration d’une interface agréable en HTML/CSS/SCSS. Le développement s’est fait en local sur un environnement **WAMP (Windows, Apache, MySQL, PHP)**, avec **PHPStorm** comme IDE principal pour structurer le projet et faciliter la navigation entre les fichiers.
+
+La version actuelle de MyCave offre un parcours utilisateur complet : création de compte, connexion, accès à un tableau de bord listant les vins de l’utilisateur connecté, ajout et modification de fiches vin, suppression d’entrées et gestion d’images stockées dans un répertoire dédié. L’application reste volontairement simple, mais elle couvre l’essentiel d’un projet web professionnel : séparation des responsabilités, accès sécurisé aux données, interface responsive et documentation.
+
+*(Une capture d’écran représentative de la page `dashboard.php`, montrant la liste des vins pour un utilisateur connecté, pourra être insérée ici ou en annexe – par exemple : « Figure 1 : Tableau de bord MyCave – vue des vins de l’utilisateur ». )*
+
 - **Nom du projet** : MyCave
 - **Objectif** : application web permettant à un utilisateur authentifié de gérer sa cave à vin personnelle (ajout, consultation, modification, suppression, illustration par photo des bouteilles).
 - **Public cible** : particuliers amateurs de vin souhaitant suivre leur stock, étudiants/développeurs pour démonstration pédagogique.
@@ -15,17 +23,13 @@ Ce document décrit le projet MyCave (gestion de cave à vin), ses objectifs, so
 
 ### 1.1. Contexte du projet / entreprise
 
-- **Entreprise / service** : agence web de petite taille spécialisée dans les sites vitrines et les applications métiers pour TPE/PME. Le service développement est composé d’un lead développeur, d’un développeur back-end, d’un développeur front-end et d’un alternant (moi) en formation DWWM.
-- **Mission confiée** : concevoir et développer une application de gestion de cave à vin permettant à chaque utilisateur de gérer son propre stock de bouteilles, tout en servant de support pédagogique pour illustrer un CRUD complet et sécurisé (authentification, gestion des utilisateurs, gestion des vins).
-- **Environnement humain** :
-  - un tuteur technique (développeur PHP sénior) qui valide les choix d’architecture,
-  - un référent métier (client interne amateur de vin) qui exprime les besoins fonctionnels,
-  - moi, en charge de l’intégration front, de la logique métier côté PHP et de la base de données.
-- **Objectifs de qualité** :
-  - code lisible et documenté pour pouvoir être repris par d’autres développeurs,
-  - interface simple, responsive, utilisable aussi bien sur ordinateur que sur mobile,
-  - sécurité minimale respectant les bonnes pratiques (mots de passe hashés, requêtes préparées, gestion des sessions),
-  - mise en place d’un jeu d’essai permettant de démontrer toutes les fonctionnalités.
+Le projet MyCave s’inscrit dans le cadre de ma formation **Développeur Web et Web Mobile (DWWM)**. Il a été conçu comme un projet fil rouge permettant de mettre en pratique, sur un cas concret, l’ensemble de la chaîne de réalisation d’une application web dynamique : de la conception de la base de données jusqu’à l’interface utilisateur, en passant par le développement PHP et la gestion de l’authentification.
+
+Dans ce contexte, MyCave joue à la fois le rôle d’outil métier (gestion d’une cave à vin personnelle) et de support pédagogique. Il m’a permis d’appliquer les notions vues en cours : création d’une base relationnelle MySQL, utilisation de **PDO** et des requêtes préparées, organisation d’un projet PHP, gestion des sessions, intégration HTML/CSS/SCSS et premiers éléments de JavaScript.
+
+Au niveau de l’organisation, le projet se rapproche du fonctionnement d’une petite agence web : un tuteur technique (développeur PHP expérimenté) pour valider les choix d’architecture et m’accompagner sur les bonnes pratiques, un référent métier imaginé comme un amateur de vin exprimant ses besoins fonctionnels, et moi en position de développeur/alternant chargé à la fois du front, du back et de la base de données. Cette configuration m’a obligé à raisonner à la fois en termes de contraintes techniques et de besoins utilisateur.
+
+Les principaux objectifs de qualité fixés dès le départ étaient les suivants : produire un code lisible et structuré, facilement compréhensible par un autre développeur ; proposer une interface simple et agréable, utilisable sur ordinateur comme sur mobile ; respecter un minimum de bonnes pratiques de sécurité (mots de passe hashés, requêtes préparées, séparation des données par utilisateur) ; et fournir une documentation claire (installation, utilisation) ainsi qu’un jeu d’essai démontrant les fonctionnalités principales.
 
 ### 1.2. Cahier des charges (expression de besoin)
 
@@ -185,7 +189,7 @@ _(Insérer 1–2 extraits de code PHP montrant une requête préparée en SELECT
 
 ### 4.1. Maquettage
 
-- Maquettes initiales / pages statiques : `dashboard.html`, `add.html` (si présentes).
+- Maquettes initiales / pages statiques : `dashboard.html` et `add.html` (si présentes).
 - Outils éventuellement utilisés : Figma, maquettes papier, etc.
 - Adaptations : ces maquettes ont été intégrées et enrichies dans `dashboard.php` et `add-wine.php`.
 
