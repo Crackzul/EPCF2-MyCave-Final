@@ -13,6 +13,7 @@ $wineCount = $wine->countByUserId($user['id']);
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard – MyCave</title>
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
@@ -124,10 +125,10 @@ $wineCount = $wine->countByUserId($user['id']);
             <div class="wine-description">${escapeHTML(wine.description)}</div>
             <div class="wine-actions">
               <button class="btn-icon" onclick="editWine(${wine.id})" title="Modifier">
-                ✏️
+                <img src="assets/img/pen-to-square.svg" alt="Modifier" class="icon-svg">
               </button>
               <button class="btn-icon" onclick="deleteWine(${wine.id})" title="Supprimer">
-                🗑️
+                <img src="assets/img/trash-arrow-up.svg" alt="Supprimer" class="icon-svg">
               </button>
             </div>
           </div>
@@ -149,7 +150,7 @@ $wineCount = $wine->countByUserId($user['id']);
         const data = await response.json();
         
         if (data.success) {
-          showMessage('🗑️ Bouteille supprimée avec succès', 'success');
+          showMessage('Bouteille supprimée avec succès', 'success', 'assets/img/trash-arrow-up.svg');
           await loadWines(); // Recharger la liste
         } else {
           showError(data.error || 'Erreur lors de la suppression');
@@ -176,7 +177,7 @@ $wineCount = $wine->countByUserId($user['id']);
     }
 
     // Afficher un message
-    function showMessage(message, type) {
+    function showMessage(message, type, icon = null) {
       // Créer ou utiliser un div de message existant
       let messageDiv = document.getElementById('message');
       if (!messageDiv) {
@@ -192,12 +193,19 @@ $wineCount = $wine->countByUserId($user['id']);
           font-weight: bold;
           z-index: 1000;
           max-width: 300px;
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
         `;
         document.body.appendChild(messageDiv);
       }
       
-      messageDiv.textContent = message;
-      messageDiv.style.background = type === 'success' 
+      const safeMessage = escapeHTML(message);
+      const iconMarkup = icon
+        ? `<img src="${icon}" alt="" aria-hidden="true" class="message-icon">`
+        : '';
+      messageDiv.innerHTML = `${iconMarkup}<span>${safeMessage}</span>`;
+      messageDiv.style.background = type === 'success'
         ? 'rgba(0, 255, 0, 0.8)' 
         : 'rgba(255, 0, 0, 0.8)';
       messageDiv.style.display = 'block';

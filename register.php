@@ -62,6 +62,7 @@ $base_url = "$protocol://$host$base_dir/";
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inscription - MyCAVE</title>
   <link rel="stylesheet" href="<?= $base_url ?>assets/css/style.css" />
 </head>
@@ -114,4 +115,3 @@ $base_url = "$protocol://$host$base_dir/";
 
 </body>
 </html>
-

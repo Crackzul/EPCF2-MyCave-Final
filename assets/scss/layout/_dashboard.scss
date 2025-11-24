@@ -103,8 +103,8 @@
   flex-grow: 1;
   display: flex;
   justify-content: center;
-
-
+  width: 100%;
+  box-sizing: border-box;
 
   // Image de fond fixe
   .background-cave {
@@ -123,10 +123,6 @@
       border-radius: 24px;
       opacity: 0.4;
     }
-
-
-
-
   }
 
   // Container de scroll plus large
@@ -175,10 +171,8 @@
   backdrop-filter: blur(12px);
   border: 1px solid rgba($color-white, 0.2);
   transition: all 0.3s ease;
-  
-  // CARTES ENCORE PLUS GRANDES
   width: calc(33.333% - 1.5rem);
-  height: 620px; // Encore plus haut pour plus d'espace !
+  height: 620px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -294,47 +288,86 @@
 
 
 
-// Responsive - Solution simple
-@media (max-width: 1200px) {
-  .dashboard-main .wines-container {
-    width: 1000px;
-  }
+// Desktop par défaut : 3 colonnes
+.wine-card {
+  width: calc(33.333% - 1.5rem);
+  // ... le reste inchangé ...
 }
 
+// ≤ 1024px : 2 colonnes
 @media (max-width: 1024px) {
   .wine-card {
     width: calc(50% - 1rem);
-    height: 70vh;
+    height: auto;
   }
-  
+
   .dashboard-main .wines-container {
     width: 100%;
   }
 }
 
+@media (max-width: 900px) {
+  .dashboard-header {
+    padding: 1rem;
+  }
+
+  .dashboard-header .header-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .dashboard-header .header-actions {
+    flex-direction: column;
+    width: 100%;
+    max-width: 420px;
+    gap: 1rem;
+  }
+
+  .dashboard-header .header-actions .btn-primary,
+  .dashboard-header .header-actions .btn-outline {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+// ≤ 768px : 1 colonne, contenu centré, fond pleine largeur
 @media (max-width: 768px) {
+  .dashboard-main {
+    padding: 1rem;
+    justify-content: center;
+    align-items: center; // centre aussi sur l'axe vertical/horizontal
+  }
+
+  .dashboard-main .background-cave {
+    padding: 0;      // l'image remplit toute la largeur
+    left: 0;
+    right: 0;
+  }
+
   .dashboard-main .wines-container {
     width: 100%;
+    max-width: 420px;   // colonne de contenu
+    margin: 0 auto;     // centrée
     padding: 1rem;
   }
 
   .wine-card {
-    width: calc(50% - 1rem); // 2 colonnes tablette
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto 2rem auto;
     height: auto;
   }
 }
 
-
+// ≤ 450px : la colonne peut occuper toute la largeur
 @media (max-width: 450px) {
   .dashboard-main .wines-container {
-    display: block !important;
-    padding: 1rem;
+    max-width: 100%;
   }
 
   .wine-card {
-    width: 100% !important;
-    max-width: 360px;
-    margin: 0 auto 2rem auto;
+    max-width: 100%;
   }
 }
-
