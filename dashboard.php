@@ -41,7 +41,7 @@ $wineCount = $wine->countByUserId($user['id']);
     </div>
     <div class="wines-container" id="wines-container">
       <div class="loading" style="text-align: center; color: white; font-size: 1.2rem; margin: 2rem;">
-        🍷 Chargement de votre cave...
+        Chargement de votre cave...
       </div>
     </div>
   </main>
@@ -83,7 +83,7 @@ $wineCount = $wine->countByUserId($user['id']);
       if (wines.length === 0) {
         container.innerHTML = `
           <div style="text-align: center; color: white; padding: 3rem;">
-            <h3 style="margin-bottom: 1rem;">🍷 Votre cave est vide</h3>
+            <h3 style="margin-bottom: 1rem;">Votre cave est vide</h3>
             <p style="margin-bottom: 2rem;">Commencez par ajouter votre première bouteille !</p>
             <button class="btn-primary" onclick="window.location.href='add-wine.php'">
               Ajouter une bouteille

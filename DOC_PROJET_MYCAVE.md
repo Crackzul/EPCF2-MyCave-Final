@@ -98,7 +98,7 @@ Le besoin exprimé par le référent métier est de disposer d’un outil simple
 - **Système** : Windows 10/11 + WAMP (Apache, PHP, MySQL).
 - **Serveur web** : Apache intégré à WAMP, configuration par défaut adaptée au développement local.
 - **SGBD** : MySQL, administration via phpMyAdmin.
-- **IDE** : VS Code avec extensions pour PHP, IntelliSense, coloration SCSS et intégration Git.
+- **IDE** : PHPStorm comme IDE principal, avec intégration Git, prise en charge de PHP et SCSS.
 - **Gestion de versions** : dépôt Git local (et éventuellement GitHub) pour historiser les évolutions du projet.
 - **Préprocesseur CSS** : SCSS compilé vers `assets/css/style.css` via npm (scripts définis dans `package.json`).
 
@@ -152,42 +152,11 @@ Ce schéma illustre la séparation des responsabilités et la circulation des do
 
 ---
 
-## 3. Modélisation et base de données (Compétences 5 et 6)
+## 3. Interfaces utilisateur et partie dynamique front-end (Compétences 2, 3 et 4)
 
-### 3.1. Schéma relationnel
+### 3.1. Interfaces utilisateur – maquettage et navigation
 
-La base de données MyCave repose au minimum sur les tables :
-
-- `users` : stocke les informations de connexion (email, mot de passe hashé, rôle, etc.).
-- `wines` : stocke les vins associés à un utilisateur (nom, millésime, pays, image, etc.).
-
-Relation principale : un `user` possède plusieurs `wines` (relation 1-N).
-
-_(Insérer ici le schéma MCD/MLD ou un schéma logique avec colonnes, types et contraintes.)_
-
-### 3.2. Script SQL et jeu d’essai
-
-- Le fichier `database/schema.sql` contient :
-  - la création des tables,
-  - les clés primaires/étrangères,
-  - un jeu de données de test (utilisateurs, vins).
-
-_(Tu peux décrire ici les comptes de test et quelques exemples de vins créés.)_
-
-### 3.3. Accès aux données (PDO et requêtes préparées)
-
-- La connexion est centralisée dans `config/database.php` ou `config/pdo.php`.
-- Les classes `User` et `Wine` exécutent des requêtes préparées pour :
-  - créer, lire, mettre à jour et supprimer des enregistrements,
-  - filtrer les vins par `user_id` (séparation des données entre utilisateurs).
-
-_(Insérer 1–2 extraits de code PHP montrant une requête préparée en SELECT et INSERT/UPDATE.)_
-
----
-
-## 4. Interfaces utilisateur – maquettes et HTML/CSS (Compétences 2 et 3)
-
-### 4.1. Maquettage
+#### 3.1.1. Maquettage
 
 - Maquettes initiales / pages statiques : `dashboard.html` et `add.html` (si présentes).
 - Outils éventuellement utilisés : Figma, maquettes papier, etc.
@@ -195,7 +164,18 @@ _(Insérer 1–2 extraits de code PHP montrant une requête préparée en SELECT
 
 _(Insérer ici des captures de maquettes + un schéma d’enchaînement : Login → Dashboard → Formulaire.)_
 
-### 4.2. Interfaces HTML
+#### 3.1.2. Schéma de navigation
+
+- Parcours type utilisateur :
+  - Arrivée sur `index.php` (connexion),
+  - Accès à `register.php` si création de compte nécessaire,
+  - Redirection vers `dashboard.php` après authentification réussie,
+  - Accès au formulaire d’ajout/édition via `add-wine.php`,
+  - Retour au tableau de bord et consultation/suppression de vins.
+
+Un schéma ou diagramme simple peut être ajouté pour montrer ce flux.
+
+### 3.2. Interfaces HTML
 
 Pages principales :
 
@@ -209,7 +189,7 @@ Pour chaque page, tu peux ajouter :
 - un court extrait de structure HTML,
 - une explication des sections (header, navigation, liste de cartes, formulaire, messages d’erreur).
 
-### 4.3. Styles CSS / SCSS
+### 3.3. Styles CSS / SCSS
 
 - Architecture SCSS :
   - `abstract/_variables.scss`, `_mixins.scss` : couleurs, typographie, fonctions utilitaires.
@@ -221,11 +201,9 @@ Pour chaque page, tu peux ajouter :
 
 _(Insérer 2–3 extraits de SCSS intéressants : variables, mixins, composants.)_
 
----
+### 3.4. Partie dynamique front-end (JavaScript)
 
-## 5. Partie dynamique front-end (JavaScript) – Compétence 4
-
-### 5.1. Fonctionnalités JS principales
+#### 3.4.1. Fonctionnalités JS principales
 
 - Gestion des formulaires (soumission, affichage d’erreurs / succès).
 - Appels asynchrones à l’API (`fetch` vers `api/wines.php` et `api/auth.php`).
@@ -236,7 +214,7 @@ _(Insérer 2–3 extraits de SCSS intéressants : variables, mixins, composants.
 
 _(Tu pourras préciser ici les fichiers ou balises `<script>` exacts une fois le code figé.)_
 
-### 5.2. Exemple d’interaction
+#### 3.4.2. Exemple d’interaction
 
 - Exemple type :
   1. L’utilisateur clique sur "Supprimer" sur une carte vin.
@@ -246,7 +224,7 @@ _(Tu pourras préciser ici les fichiers ou balises `<script>` exacts une fois le
 
 _(Inclure un extrait de code JS commenté illustrant ce scénario.)_
 
-### 5.3. Améliorations UX
+#### 3.4.3. Améliorations UX
 
 - Validation front (champs requis, formats simples).
 - Messages de feedback clairs (erreur / succès).
@@ -254,9 +232,42 @@ _(Inclure un extrait de code JS commenté illustrant ce scénario.)_
 
 ---
 
-## 6. Composants back-end et API – Compétence 2 (Back-end sécurisé)
+## 4. Composants back-end, base de données et sécurité
 
-### 6.1. Système de login / gestion des utilisateurs
+### 4.1. Modélisation et base de données (Compétences 5 et 6)
+
+#### 4.1.1. Schéma relationnel
+
+La base de données MyCave repose au minimum sur les tables :
+
+- `users` : stocke les informations de connexion (email, mot de passe hashé, rôle, etc.).
+- `wines` : stocke les vins associés à un utilisateur (nom, millésime, pays, image, etc.).
+
+Relation principale : un `user` possède plusieurs `wines` (relation 1-N).
+
+_(Insérer ici le schéma MCD/MLD ou un schéma logique avec colonnes, types et contraintes.)_
+
+#### 4.1.2. Script SQL et jeu d’essai
+
+- Le fichier `database/schema.sql` contient :
+  - la création des tables,
+  - les clés primaires/étrangères,
+  - un jeu de données de test (utilisateurs, vins).
+
+_(Tu peux décrire ici les comptes de test et quelques exemples de vins créés.)_
+
+#### 4.1.3. Accès aux données (PDO et requêtes préparées)
+
+- La connexion est centralisée dans `config/database.php` ou `config/pdo.php`.
+- Les classes `User` et `Wine` exécutent des requêtes préparées pour :
+  - créer, lire, mettre à jour et supprimer des enregistrements,
+  - filtrer les vins par `user_id` (séparation des données entre utilisateurs).
+
+_(Insérer 1–2 extraits de code PHP montrant une requête préparée en SELECT et INSERT/UPDATE.)_
+
+### 4.2. Composants back-end et API – Compétence 2 (Back-end sécurisé)
+
+#### 4.2.1. Système de login / gestion des utilisateurs
 
 - Les classes et scripts impliqués :
   - `classes/User.php`,
@@ -270,7 +281,7 @@ _(Inclure un extrait de code JS commenté illustrant ce scénario.)_
 
 _(Tu peux renvoyer ici vers `REGISTRATION_FEATURE.md` qui détaille davantage cette partie.)_
 
-### 6.2. API des vins (CRUD)
+#### 4.2.2. API des vins (CRUD)
 
 - Endpoint principal : `api/wines.php`.
 - Méthodes utilisées :
@@ -282,11 +293,9 @@ _(Tu peux renvoyer ici vers `REGISTRATION_FEATURE.md` qui détaille davantage ce
 
 _(Décrire ici un ou deux exemples complets de requête/réponse.)_
 
----
+### 4.3. Sécurité et qualité – Compétence 8
 
-## 7. Sécurité et qualité – Compétence 8
-
-### 7.1. Mesures de sécurité mises en place
+#### 4.3.1. Mesures de sécurité mises en place
 
 - **Authentification** :
   - mots de passe hashés (function `password_hash` / `password_verify`),
@@ -301,7 +310,7 @@ _(Décrire ici un ou deux exemples complets de requête/réponse.)_
 
 _(Tu peux ajouter ici les faiblesses identifiées et les pistes d’amélioration : CSRF, XSS, mots de passe plus robustes, HTTPS, etc.)_
 
-### 7.2. Jeu d’essai fonctionnel
+#### 4.3.2. Jeu d’essai fonctionnel
 
 Décrire un scénario de test représentatif (par exemple, la gestion complète d’un vin) :
 
@@ -317,7 +326,7 @@ Décrire un scénario de test représentatif (par exemple, la gestion complète 
   - comportement réel observé,
   - éventuelles anomalies et corrections apportées.
 
-### 7.3. Veille technologique
+#### 4.3.3. Veille technologique
 
 Décrire brièvement la veille effectuée durant le projet (lecture d’articles, documentation, tutoriels) :
 
@@ -327,24 +336,24 @@ Décrire brièvement la veille effectuée durant le projet (lecture d’articles
 
 ---
 
-## 8. Correspondance avec les compétences du référentiel
+## 5. Correspondance avec les compétences du référentiel
 
 | N° CP | Compétence professionnelle                                                       | Comment MyCave la met en œuvre                                                                                             |
 |:-----:|----------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
-|  1    | Installer et configurer son environnement de travail en fonction du projet web ou web mobile | Mise en place de l’environnement Windows + WAMP, création de la base `mycave_db`, configuration de `config/database.php` / `pdo.php`, utilisation de VS Code, Git et npm/SCSS (chapitres 2 et 4). |
-|  2    | Maquetter des interfaces utilisateur web ou web mobile                          | Réalisation des pages statiques `dashboard.html` et `add.html`, schéma de navigation Login → Dashboard → Formulaire, adaptation en versions dynamiques `dashboard.php` et `add-wine.php` (chapitre 5.1). |
-|  3    | Réaliser des interfaces utilisateur statiques web ou web mobile                 | Intégration HTML/CSS des pages `index.php`, `register.php`, `dashboard.php`, `add-wine.php`, architecture SCSS (`abstract`, `components`, `layout`, `pages`), responsive design (3/2/1 colonnes) (chapitre 5.2 et 5.3). |
-|  4    | Développer la partie dynamique des interfaces utilisateur web ou web mobile     | Utilisation de JavaScript (Fetch API) pour appeler `api/auth.php` et `api/wines.php`, gestion dynamique de la liste des vins, suppression avec confirmation, mise à jour du DOM et des compteurs, gestion des messages d’erreur/succès (chapitre 5.4). |
-|  5    | Mettre en place une base de données relationnelle                               | Conception et création de la base MySQL `mycave_db` via `database/schema.sql`, tables `users` et `wines` liées par `user_id`, contraintes d’intégrité, jeu d’essai initial (chapitre 3.1 et 3.2). |
-|  6    | Développer des composants d’accès aux données SQL et NoSQL                      | Mise en place de la couche d’accès aux données avec PDO dans `config/database.php` / `pdo.php`, classes `User.php` et `Wine.php` implémentant les opérations CRUD via requêtes préparées, filtrage des vins par utilisateur, APIs `api/auth.php` et `api/wines.php` (chapitre 3.3 et 6). |
-|  7    | Développer des composants métier côté serveur                                   | Encapsulation de la logique métier dans les classes `User` et `Wine` (vérification d’email unique, hash des mots de passe, règles de création/modification/suppression des vins), scripts d’orchestration dans `api/auth.php` et `api/wines.php` (chapitre 6). |
-|  8    | Documenter le déploiement d’une application dynamique web ou web mobile         | Rédaction du `README.md` et de `DOC_PROJET_MYCAVE.md` décrivant l’installation locale, la configuration de la base, la structure du projet, les endpoints API, ainsi que les mesures de sécurité et les pistes d’amélioration, et description d’un scénario de déploiement sur hébergement mutualisé (chapitres 2, 4 et 7). |
+|  1    | Installer et configurer son environnement de travail en fonction du projet web ou web mobile | Mise en place de l’environnement Windows + WAMP, création de la base `mycave_db`, configuration de `config/database.php` / `pdo.php`, utilisation de PHPStorm, Git et npm/SCSS (chapitres 2.1 et 2.2). |
+|  2    | Maquetter des interfaces utilisateur web ou web mobile                          | Réalisation des pages statiques `dashboard.html` et `add.html`, schéma de navigation Login → Dashboard → Formulaire, adaptation en versions dynamiques `dashboard.php` et `add-wine.php` (chapitre 3.1). |
+|  3    | Réaliser des interfaces utilisateur statiques web ou web mobile                 | Intégration HTML/CSS des pages `index.php`, `register.php`, `dashboard.php`, `add-wine.php`, architecture SCSS (`abstract`, `components`, `layout`, `pages`), responsive design (3/2/1 colonnes) (chapitres 3.2 et 3.3). |
+|  4    | Développer la partie dynamique des interfaces utilisateur web ou web mobile     | Utilisation de JavaScript (Fetch API) pour appeler `api/auth.php` et `api/wines.php`, gestion dynamique de la liste des vins, suppression avec confirmation, mise à jour du DOM et des compteurs, gestion des messages d’erreur/succès (chapitre 3.4). |
+|  5    | Mettre en place une base de données relationnelle                               | Conception et création de la base MySQL `mycave_db` via `database/schema.sql`, tables `users` et `wines` liées par `user_id`, contraintes d’intégrité, jeu d’essai initial (chapitre 4.1.1 et 4.1.2). |
+|  6    | Développer des composants d’accès aux données SQL et NoSQL                      | Mise en place de la couche d’accès aux données avec PDO dans `config/database.php` / `pdo.php`, classes `User.php` et `Wine.php` implémentant les opérations CRUD via requêtes préparées, filtrage des vins par utilisateur, APIs `api/auth.php` et `api/wines.php` (chapitres 4.1.3 et 4.2). |
+|  7    | Développer des composants métier côté serveur                                   | Encapsulation de la logique métier dans les classes `User` et `Wine` (vérification d’email unique, hash des mots de passe, règles de création/modification/suppression des vins), scripts d’orchestration dans `api/auth.php` et `api/wines.php` (chapitre 4.2). |
+|  8    | Documenter le déploiement d’une application dynamique web ou web mobile         | Rédaction du `README.md` et de `DOC_PROJET_MYCAVE.md` décrivant l’installation locale, la configuration de la base, la structure du projet, les endpoints API, ainsi que les mesures de sécurité et les pistes d’amélioration, et description d’un scénario de déploiement sur hébergement mutualisé (chapitres 2, 3 et 4.3). |
 
 Tu peux compléter cette table avec des références précises à des fichiers / extraits de code (captures d’écran, listings) que tu souhaites mettre en avant dans ton dossier.
 
 ---
 
-## 9. Synthèse personnelle
+## 6. Synthèse personnelle
 
 _(Section à rédiger en ton nom : ce que tu as appris, les difficultés rencontrées, les compétences que tu estimes avoir particulièrement développées grâce à MyCave.)_
 

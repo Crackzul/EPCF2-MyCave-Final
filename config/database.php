@@ -1,42 +1,39 @@
 <?php
-// Configuration spécifique WAMP64
+// Configuration de la connexion à la base de données MySQL pour le projet MyCave
+// Ce fichier retourne un objet PDO prêt à l'emploi.
+
 class Database {
+    // Propriété privée qui contiendra l'objet PDO
     private $conn;
 
+    // Méthode publique appelée depuis le reste du projet pour obtenir la connexion
     public function getConnection() {
+        // On initialise la connexion à null au cas où
         $this->conn = null;
-        
+
         try {
-            // Configuration MySQL WAMP64
-            $this->conn = new PDO(
-                "mysql:host=localhost;dbname=mycave_db;charset=utf8mb4",
-                "root",
-                "", // WAMP64 : pas de mot de passe par défaut
-                array(
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
-                )
-            );
-            return $this->conn;
-            
-        } catch(PDOException $e_mysql) {
-            // Fallback SQLite si MySQL ne fonctionne pas
-            try {
-                $sqliteFile = __DIR__ . "/../database/mycave.db";
-                $this->conn = new PDO(
-                    "sqlite:" . $sqliteFile,
-                    null,
-                    null,
-                    array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
-                );
-                return $this->conn;
-                
-            } catch(PDOException $e_sqlite) {
-                echo "Erreur de connexion BDD: " . $e_mysql->getMessage();
-                echo "<br>Erreur SQLite: " . $e_sqlite->getMessage();
-            }
+            // 1. On définit les paramètres de connexion
+            $host = 'localhost';        // Serveur MySQL (WAMP en local)
+            $dbName = 'mycave_db';     // Nom de la base de données
+            $charset = 'utf8mb4';      // Encodage conseillé
+            $user = 'root';            // Utilisateur MySQL par défaut sous WAMP
+            $password = '';            // Mot de passe vide par défaut sous WAMP
+
+            // 2. On construit la chaîne DSN (Data Source Name)
+            $dsn = "mysql:host=$host;dbname=$dbName;charset=$charset";
+
+            // 3. On crée l'objet PDO (connexion à MySQL)
+            $this->conn = new PDO($dsn, $user, $password, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,      // Remonter les erreurs sous forme d'exceptions
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, // Renvoyer les résultats sous forme de tableaux associatifs
+            ]);
+
+        } catch (PDOException $e) {
+            // En cas d'erreur de connexion, on affiche un message clair et on arrête le script
+            die('Erreur de connexion à la base de données : ' . $e->getMessage());
         }
-        
+
+        // 4. On renvoie l'objet PDO au code qui a appelé getConnection()
         return $this->conn;
     }
 }
