@@ -78,7 +78,7 @@ $base_url = "$protocol://$host$base_dir/";
 
         <p style="text-align: center; margin-top: 1rem; color: #ccc;">
           Vous n'avez pas encore de compte ?
-          <a href="register.php" style="color: #8b0000; font-weight: bold; text-decoration: none;">Créer un compte</a>
+          <a href="register.php" style="color: #fff; font-weight: bold; text-decoration: none;">Créer un compte</a>
         </p>
       </form>
     </div>

@@ -103,7 +103,7 @@ $base_url = "$protocol://$host$base_dir/";
 
         <p style="text-align: center; margin-top: 1rem; color: #ccc;">
           Vous avez déjà un compte ?
-          <a href="index.php" style="color: #8b0000; font-weight: bold; text-decoration: none;">Se connecter</a>
+          <a href="index.php" style="color: #fff; font-weight: bold; text-decoration: none;">Se connecter</a>
         </p>
       </form>
     </div>

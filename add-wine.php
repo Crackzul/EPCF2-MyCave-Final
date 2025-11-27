@@ -122,7 +122,8 @@ $wineCount = $wine->countByUserId($user['id']);
         </div>
 
         <button type="submit" class="btn-submit">
-          💾 <?= $isEdit ? 'Mettre à jour' : 'Enregistrer' ?> la bouteille
+          <img src="assets/img/disquette.svg" alt="" class="icon-svg" aria-hidden="true">
+          <?= $isEdit ? 'Mettre à jour' : 'Enregistrer' ?> la bouteille
         </button>
       </form>
 

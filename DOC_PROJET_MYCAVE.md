@@ -203,32 +203,265 @@ _(Insérer 2–3 extraits de SCSS intéressants : variables, mixins, composants.
 
 ### 3.4. Partie dynamique front-end (JavaScript)
 
-#### 3.4.1. Fonctionnalités JS principales
+La partie JavaScript de MyCave est intégrée directement dans les balises `<script>` des pages PHP (`dashboard.php`, `add-wine.php`), permettant une gestion dynamique des interactions utilisateur sans rechargement complet de la page. Le code utilise l'API Fetch moderne pour communiquer avec le back-end de manière asynchrone.
 
-- Gestion des formulaires (soumission, affichage d’erreurs / succès).
-- Appels asynchrones à l’API (`fetch` vers `api/wines.php` et `api/auth.php`).
-- Mise à jour dynamique du DOM :
-  - affichage des cartes de vins,
-  - mise à jour d’un compteur de bouteilles,
-  - suppression de carte sans rechargement complet.
+#### 3.4.1. Localisation et vue d'ensemble du code JavaScript
 
-_(Tu pourras préciser ici les fichiers ou balises `<script>` exacts une fois le code figé.)_
+Le code JavaScript de MyCave est intégré dans **deux fichiers principaux** :
 
-#### 3.4.2. Exemple d’interaction
+- **`dashboard.php`** (lignes 58-232) : chargement et affichage dynamique des vins, suppression avec confirmation, mise à jour du compteur de bouteilles.
+- **`add-wine.php`** (lignes 137-195) : soumission asynchrone du formulaire d'ajout/modification avec upload d'image.
 
-- Exemple type :
-  1. L’utilisateur clique sur "Supprimer" sur une carte vin.
-  2. Une confirmation JS est affichée.
-  3. En cas de validation, un appel `DELETE` est envoyé à l’API.
-  4. En cas de succès, la carte correspondante est retirée du DOM et le compteur est mis à jour.
+**Note** : La page `register.php` utilise uniquement la validation HTML5 native (`required`, `type="email"`) sans JavaScript.
 
-_(Inclure un extrait de code JS commenté illustrant ce scénario.)_
+**Technologies utilisées :**
+- Fetch API pour les appels REST asynchrones
+- `async/await` pour une gestion claire des promesses
+- FormData pour l'upload de fichiers
+- Template literals (ES6) pour la génération HTML dynamique
+- Fonction `escapeHTML()` custom pour la sécurité XSS
 
-#### 3.4.3. Améliorations UX
+---
 
-- Validation front (champs requis, formats simples).
-- Messages de feedback clairs (erreur / succès).
-- Prévisualisation de l’image uploadée (si implémentée).
+#### 3.4.2. Exemples de code JavaScript significatifs
+
+Les trois extraits suivants ont été sélectionnés pour leur pertinence pédagogique et leur démonstration de compétences variées.
+
+##### Exemple 1 : Suppression d'une bouteille avec confirmation
+
+**Contexte :** Lorsque l'utilisateur clique sur l'icône "Supprimer" d'une carte de vin, cette fonction gère l'ensemble du processus : confirmation, appel API, feedback visuel et mise à jour de l'interface.
+
+```javascript
+// Extrait de dashboard.php (lignes 144-167)
+async function deleteWine(wineId) {
+  // 1. Confirmation utilisateur avant action destructive
+  if (!confirm('Êtes-vous sûr de vouloir supprimer cette bouteille ?')) {
+    return; // Annulation : on arrête ici
+  }
+  
+  try {
+    // 2. Appel DELETE vers l'API REST
+    const response = await fetch(`api/wines.php?id=${wineId}`, {
+      method: 'DELETE'
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      // 3. Feedback positif avec icône personnalisée
+      showMessage('Bouteille supprimée avec succès', 'success', 
+                  'assets/img/trash-arrow-up.svg');
+      
+      // 4. Rechargement de la liste (mise à jour du DOM et du compteur)
+      await loadWines();
+    } else {
+      // 5. Gestion de l'erreur métier (ex: vin introuvable)
+      showError(data.error || 'Erreur lors de la suppression');
+    }
+  } catch (error) {
+    // 6. Gestion de l'erreur réseau (ex: serveur injoignable)
+    showError('Erreur de connexion');
+  }
+}
+```
+
+**Compétences démontrées :**
+- **API REST** : requête DELETE avec paramètre dans l'URL
+- **Asynchrone** : `async/await` pour gérer les promesses de manière lisible
+- **UX** : confirmation avant suppression, feedback immédiat
+- **Gestion d'erreurs** : distinction erreur métier vs. erreur réseau
+- **Modularité** : appel à des fonctions réutilisables (`loadWines`, `showMessage`)
+
+##### Exemple 2 : Génération dynamique de cartes HTML avec sécurité XSS
+
+**Contexte :** Cette fonction transforme les données JSON reçues de l'API en HTML visuel (cartes de vins). Toutes les données utilisateur sont échappées pour prévenir les attaques XSS.
+
+```javascript
+// Extrait de dashboard.php (lignes 101-141)
+
+// Fonction d'échappement HTML pour prévenir les attaques XSS
+function escapeHTML(str) {
+  const p = document.createElement('p');
+  p.appendChild(document.createTextNode(str));
+  return p.innerHTML; // Les caractères spéciaux sont automatiquement échappés
+}
+
+function createWineCard(wine) {
+  const imageUrl = wine.picture ? `uploads/${wine.picture}` : '';
+
+  // Template littéral : génération HTML dynamique
+  return `
+    <div class="wine-card" data-id="${wine.id}">
+      <div class="wine-image">
+        <!-- Fallback si l'image n'existe pas -->
+        <img src="${imageUrl}" 
+             alt="${escapeHTML(wine.name)}" 
+             onerror="this.style.display='none'">
+      </div>
+      <div class="wine-info">
+        <!-- Échappement systématique des données utilisateur -->
+        <h3>${escapeHTML(wine.name)}</h3>
+        <div class="wine-details">
+          <span><strong>Année:</strong> ${wine.year}</span>
+          <span><strong>Cépage:</strong> ${escapeHTML(wine.grapes)}</span>
+          <span><strong>Pays:</strong> ${escapeHTML(wine.country)}</span>
+          <span><strong>Région:</strong> ${escapeHTML(wine.region)}</span>
+        </div>
+        <div class="wine-description">${escapeHTML(wine.description)}</div>
+        
+        <!-- Boutons d'action avec icônes SVG -->
+        <div class="wine-actions">
+          <button class="btn-icon" onclick="editWine(${wine.id})" title="Modifier">
+            <img src="assets/img/pen-to-square.svg" alt="Modifier" class="icon-svg">
+          </button>
+          <button class="btn-icon" onclick="deleteWine(${wine.id})" title="Supprimer">
+            <img src="assets/img/trash-arrow-up.svg" alt="Supprimer" class="icon-svg">
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+```
+
+**Compétences démontrées :**
+- **Sécurité** : échappement HTML pour prévenir les injections XSS
+- **Manipulation DOM** : génération HTML dynamique via template literals (ES6)
+- **Gestion d'images** : fallback avec `onerror` si image introuvable
+- **Accessibilité** : attributs `alt` et `title` pour les lecteurs d'écran
+- **Architecture** : fonction pure, facile à tester et réutiliser
+
+##### Exemple 3 : Soumission de formulaire avec upload d'image
+
+**Contexte :** Cette fonction gère la soumission du formulaire d'ajout ou de modification de vin, y compris l'upload de l'image de la bouteille. Elle distingue automatiquement le mode création du mode édition.
+
+**1. Gestion des formulaires avec soumission asynchrone**
+
+**Contexte :** Cette fonction gère la soumission du formulaire d'ajout ou de modification de vin, y compris l'upload de l'image de la bouteille. Elle distingue automatiquement le mode création du mode édition.
+
+```javascript
+// Extrait de add-wine.php (lignes 141-181)
+const isEdit = <?= $isEdit ? 'true' : 'false' ?>; // Variable PHP injectée
+const wineData = <?= $isEdit ? json_encode($wineData) : 'null' ?>;
+
+document.getElementById('wineForm').addEventListener('submit', async (e) => {
+  e.preventDefault(); // Empêche le rechargement de la page
+  
+  // FormData : permet d'envoyer des fichiers (multipart/form-data)
+  const formData = new FormData(e.target);
+  
+  try {
+    let response;
+    
+    if (isEdit) {
+      // Mode édition : simulation de PUT via POST (limitation multipart/form-data)
+      formData.append('_method', 'PUT');
+      formData.append('id', wineData.id);
+      
+      response = await fetch('api/wines.php', {
+        method: 'POST', // POST obligatoire pour envoyer des fichiers
+        body: formData
+      });
+    } else {
+      // Mode création : POST classique
+      response = await fetch('api/wines.php', {
+        method: 'POST',
+        body: formData
+      });
+    }
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      // Feedback positif
+      showMessage(data.message || '🍷 Bouteille sauvegardée avec succès !', 'success');
+      
+      // Redirection après 1,5 seconde (laisse le temps de voir le message)
+      setTimeout(() => {
+        window.location.href = 'dashboard.php';
+      }, 1500);
+    } else {
+      // Affichage de l'erreur sans quitter la page
+      showMessage(data.error || 'Erreur lors de la sauvegarde', 'error');
+    }
+  } catch (error) {
+    // Erreur réseau ou parsing JSON
+    showMessage('Erreur de connexion au serveur', 'error');
+    console.error('Erreur:', error);
+  }
+});
+```
+
+**Compétences démontrées :**
+- **Upload de fichiers** : `FormData` pour gérer les images (multipart/form-data)
+- **Logique conditionnelle** : distinction création vs. édition avec `if/else`
+- **API REST** : simulation de PUT via POST + `_method` (workaround standard)
+- **UX avancée** : feedback immédiat + redirection différée (1,5s)
+- **Gestion d'erreurs** : `try/catch` + `console.error` pour le debugging
+- **Intégration PHP-JS** : variables PHP injectées dans le contexte JavaScript
+
+##### 📸 Captures d'écran pour ces exemples
+
+**Pour l'exemple 1 (Suppression) :**
+1. Dashboard avec curseur survolant l'icône "Supprimer"
+2. Boîte de dialogue de confirmation du navigateur
+3. Console développeur montrant la requête DELETE et la réponse JSON `{"success": true}`
+4. Message de succès vert avec icône poubelle
+5. Dashboard actualisé : carte disparue, compteur mis à jour
+
+**Pour l'exemple 2 (Génération de cartes) :**
+1. Console développeur montrant les données JSON reçues de `api/wines.php`
+2. Inspecteur d'éléments montrant le HTML généré d'une carte
+3. Exemple de sécurité : nom de vin contenant `<script>` affiché comme texte échappé
+
+**Pour l'exemple 3 (Formulaire) :**
+1. Formulaire rempli avec image sélectionnée
+2. Console développeur (Network) montrant la requête POST avec FormData
+3. Message de succès avec emoji 🍷 avant redirection
+
+---
+
+#### 3.4.3. Points forts de l'implémentation JavaScript
+
+**Architecture et bonnes pratiques :**
+- ✅ **Code modulaire** : fonctions réutilisables (`loadWines`, `showMessage`, `escapeHTML`)
+- ✅ **Séparation des responsabilités** : chaque fonction a un rôle clair et unique
+- ✅ **Gestion d'erreurs robuste** : distinction erreur métier vs. erreur réseau
+- ✅ **Sécurité XSS** : échappement systématique des données utilisateur
+- ✅ **UX soignée** : confirmations, feedback immédiat, redirections différées
+
+**Expérience utilisateur :**
+- ✅ **Pas de rechargement** : mises à jour ciblées du DOM pour une navigation fluide
+- ✅ **Feedback visuel** : messages colorés (vert/rouge) avec icônes personnalisées
+- ✅ **Confirmation des actions destructives** : `confirm()` avant suppression
+- ✅ **Messages clairs** : distinction entre erreurs techniques et erreurs métier
+
+**Technologies modernes :**
+- ✅ **ES6+** : `async/await`, template literals, arrow functions
+- ✅ **Fetch API** : remplacement moderne de XMLHttpRequest
+- ✅ **FormData** : gestion native des uploads de fichiers
+- ✅ **API HTML5** : validation native des formulaires
+
+##### 🚀 Pistes d'amélioration identifiées
+
+Dans le cadre d'une évolution future du projet, les améliorations suivantes pourraient être envisagées :
+
+- **Indicateurs de chargement** : spinners pendant les requêtes API longues
+- **Validation JavaScript avancée** : vérification du format email et de la robustesse du mot de passe avant soumission
+- **Prévisualisation d'image** : aperçu de l'image uploadée avant envoi du formulaire
+- **Gestion hors ligne** : Service Workers pour consulter la cave sans connexion
+- **Accessibilité renforcée** : rôles ARIA pour les messages dynamiques (`role="alert"`)
+- **Tests automatisés** : suite de tests avec Jest ou Cypress
+
+---
+
+---
+
+**📝 Remarques pour le rédacteur :**
+
+- Les numéros de lignes indiqués sont approximatifs et peuvent varier si le code évolue.
+- Pour illustrer cette section, privilégie des captures d'écran avec des annotations (flèches, encadrés) pour guider l'œil du lecteur.
+- Un fichier de référence complet avec tous les extraits de code et un guide de prise de captures est disponible dans `DOC_PROJET_MYCAVE_3.4_COMPLET.md`.
 
 ---
 

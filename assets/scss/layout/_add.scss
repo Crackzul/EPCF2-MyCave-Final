@@ -170,11 +170,21 @@
           width: 100%;
           transition: all 0.2s ease;
           font-weight: bold;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
 
           &:hover {
             background-color: rgba($color-primary, 0.8);
             border-color: $color-white;
             transform: scale(1.02);
+          }
+
+          .icon-svg {
+            height: 60px;
+            object-fit: contain;
+            flex-shrink: 0;
           }
         }
       }
