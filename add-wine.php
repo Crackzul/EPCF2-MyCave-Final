@@ -141,30 +141,20 @@ $wineCount = $wine->countByUserId($user['id']);
 
     document.getElementById('wineForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      
+
       const formData = new FormData(e.target);
       
-      try {
-        let response;
-        
-        if (isEdit) {
-          // En mode édition, on utilise POST mais on simule un PUT
-          // pour que le serveur puisse gérer le multipart/form-data
-          formData.append('_method', 'PUT');
-          formData.append('id', wineData.id);
+      // En mode édition, on ajoute simplement l'ID
+      if (isEdit) {
+        formData.append('id', wineData.id);
+      }
 
-          response = await fetch('api/wines.php', {
-            method: 'POST', // Toujours POST pour envoyer des fichiers
-            body: formData
-          });
-        } else {
-          // Mode création
-          response = await fetch('api/wines.php', {
-            method: 'POST',
-            body: formData
-          });
-        }
-        
+      try {
+        const response = await fetch('api/wines.php', {
+          method: 'POST', // POST en création et édition
+          body: formData
+        });
+
         const data = await response.json();
         
         if (data.success) {

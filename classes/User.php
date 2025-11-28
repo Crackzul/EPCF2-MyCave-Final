@@ -52,7 +52,7 @@ class User {
     }
 
     public function login($email, $password) {
-        $query = "SELECT id, email1, password1, username, roles 
+        $query = "SELECT id, email1, password1, username, roles
                   FROM " . $this->table_name . " 
                   WHERE email1 = :email LIMIT 1";
 
@@ -75,7 +75,7 @@ class User {
     }
 
     public function getUserById($id) {
-        $query = "SELECT id, email1, username, roles, created_at 
+        $query = "SELECT id, email1, username, roles, created_at
                   FROM " . $this->table_name . " 
                   WHERE id = :id LIMIT 1";
 

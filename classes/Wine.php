@@ -48,11 +48,11 @@ class Wine {
                   WHERE user_id = :user_id 
                   ORDER BY created_at DESC";
 
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":user_id", $user_id);
-        $stmt->execute();
+        $stmt = $this->conn->prepare($query); // Requête préparée pour éviter les injections SQL
+        $stmt->bindParam(":user_id", $user_id); // Sécurisation de la variable user_id
+        $stmt->execute(); // Exécution de la requête
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); // Récupération de tous les résultats sous forme de tableau associatif
     }
 
     public function getById($id) {

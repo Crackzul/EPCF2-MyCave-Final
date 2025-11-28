@@ -66,7 +66,8 @@ Le besoin exprimé par le référent métier est de disposer d’un outil simple
   - interface responsive utilisable sur desktop, tablette et mobile.
 
 - **API et architecture** :
-  - exposer des endpoints REST pour l’authentification et le CRUD des vins,
+  - exposer un endpoint REST (`api/wines.php`) pour le CRUD des vins,
+  - authentification traditionnelle via formulaires PHP et sessions (`index.php`, `register.php`, `logout.php`),
   - séparer la logique métier (classes PHP) de la couche de présentation (vues PHP/HTML),
   - centraliser la configuration de la base de données.
 
@@ -144,11 +145,13 @@ L’architecture de MyCave est organisée par responsabilités :
   - `dashboard.php` : tableau de bord de l’utilisateur connecté (liste de ses vins),
   - `add-wine.php` : formulaire d’ajout / d’édition d’un vin.
 
-Un schéma d’architecture simple peut être ajouté ici pour synthétiser :
+Un schéma d'architecture simple peut être ajouté ici pour synthétiser :
 
-> **Navigateur (HTML/CSS/JS)** ⇄ **Endpoints API PHP (`api/auth.php`, `api/wines.php`)** ⇄ **Classes métier (`User`, `Wine`)** ⇄ **Base MySQL (`users`, `wines`)**
+> **Architecture hybride** :
+> - **Authentification** : Navigateur (Formulaires HTML) ⇄ Pages PHP (`index.php`, `register.php`) ⇄ Classes (`User`) ⇄ Base MySQL
+> - **CRUD Vins** : Navigateur (JavaScript/Fetch) ⇄ API REST (`api/wines.php`) ⇄ Classes (`Wine`) ⇄ Base MySQL
 
-Ce schéma illustre la séparation des responsabilités et la circulation des données entre le front-end, le back-end et la base de données.
+Ce schéma illustre la séparation des responsabilités : authentification traditionnelle (formulaires + sessions) et gestion des vins via API REST pour une interface dynamique sans rechargement.
 
 ---
 
@@ -503,28 +506,63 @@ _(Insérer 1–2 extraits de code PHP montrant une requête préparée en SELECT
 #### 4.2.1. Système de login / gestion des utilisateurs
 
 - Les classes et scripts impliqués :
-  - `classes/User.php`,
-  - `api/auth.php`,
-  - `includes/session.php`,
-  - `index.php`, `register.php`, `logout.php`.
+  - `classes/User.php` : logique métier (création, login, vérification email),
+  - `includes/session.php` : fonctions de gestion de session (`isLoggedIn()`, `createUserSession()`, `requireLogin()`),
+  - `index.php` : page de connexion (formulaire POST vers la même page),
+  - `register.php` : page d'inscription (formulaire POST),
+  - `logout.php` : destruction de session.
+  
+- **Architecture** : Authentification traditionnelle (pas d'API REST)
+  - Les formulaires de connexion/inscription soumettent directement vers les pages PHP
+  - Les pages PHP instancient la classe `User` pour valider les credentials
+  - En cas de succès, création de session PHP avec `createUserSession()`
+  - Redirection vers `dashboard.php`
+
 - Flux typique :
-  - Inscription → stockage en base (mot de passe hashé),
-  - Connexion → vérification de l’email + mot de passe hashé,
-  - Ouverture de session → accès aux pages protégées.
+  - **Inscription** → `register.php` POST → `User::create()` → stockage en base (mot de passe hashé avec `password_hash()`) → session créée → redirection dashboard
+  - **Connexion** → `index.php` POST → `User::login()` → vérification email + `password_verify()` → session créée → redirection dashboard
+  - **Déconnexion** → `logout.php` → `session_destroy()` → redirection index
 
 _(Tu peux renvoyer ici vers `REGISTRATION_FEATURE.md` qui détaille davantage cette partie.)_
 
-#### 4.2.2. API des vins (CRUD)
+#### 4.2.2. API REST des vins (CRUD)
 
-- Endpoint principal : `api/wines.php`.
-- Méthodes utilisées :
-  - `GET` : liste des vins de l’utilisateur courant,
-  - `POST` : création d’un vin,
-  - `PUT/PATCH` : mise à jour d’un vin existant,
-  - `DELETE` : suppression d’un vin.
-- Format de données : JSON / `multipart/form-data` pour l’upload d’image.
+- **Endpoint principal** : `api/wines.php`
+- **Authentification** : Vérification de session PHP via `isLoggedIn()` (ligne 11-15)
+  ```php
+  if (!isLoggedIn()) {
+      http_response_code(401);
+      echo json_encode(['error' => 'Non autorisé']);
+      exit();
+  }
+  ```
 
-_(Décrire ici un ou deux exemples complets de requête/réponse.)_
+- **Méthodes HTTP supportées** :
+  - `GET` : liste des vins de l'utilisateur connecté
+  - `POST` : création d'un nouveau vin (avec upload d'image)
+  - `PUT` : mise à jour d'un vin existant (avec upload optionnel)
+  - `DELETE` : suppression d'un vin
+
+- **Format de données** : 
+  - Réponses : JSON (`Content-Type: application/json`)
+  - Envois : `multipart/form-data` (pour l'upload d'images)
+
+- **Sécurité** :
+  - Vérification que l'utilisateur ne peut modifier/supprimer que ses propres vins
+  - Upload d'images : validation du type MIME, noms de fichiers uniques (uniqid)
+  - Requêtes préparées PDO dans les classes métier
+
+- **Exemple de flux** :
+  ```
+  dashboard.php (JavaScript) 
+    → fetch('api/wines.php') 
+    → Vérification session 
+    → Wine::getByUserId() 
+    → SELECT en BDD
+    → JSON {success: true, wines: [...], count: 12}
+  ```
+
+_(Décrire ici un ou deux exemples complets de requête/réponse si nécessaire.)_
 
 ### 4.3. Sécurité et qualité – Compétence 8
 

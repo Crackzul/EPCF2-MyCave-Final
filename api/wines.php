@@ -22,14 +22,15 @@ switch($method) {
         getWines();
         break;
     case 'POST':
-        // Gérer la surcharge de méthode pour les mises à jour avec fichiers
-        if (isset($_POST['_method']) && $_POST['_method'] === 'PUT') {
+        // Si 'id' est présent, c'est une mise à jour, sinon c'est une création
+        if (isset($_POST['id']) && !empty($_POST['id'])) {
             updateWine();
         } else {
             addWine();
         }
         break;
     case 'PUT':
+        // Gardé pour compatibilité (non utilisé actuellement)
         updateWine();
         break;
     case 'DELETE':
@@ -43,8 +44,8 @@ switch($method) {
 function getWines() {
     global $user;
     
-    $wine = new Wine();
-    $wines = $wine->getByUserId($user['id']);
+    $wine = new Wine(); // Création de l'instance de la classe Wine
+    $wines = $wine->getByUserId($user['id']); // Récupérer les bouteilles de l'utilisateur
     
     echo json_encode([
         'success' => true,

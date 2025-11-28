@@ -106,43 +106,38 @@ chmod 777 uploads
 - [x] Responsive design (3 cols → 2 cols → 1 col)
 - [x] Animations et transitions fluides
 
+### 🔐 Authentification
+
+**Architecture traditionnelle** (formulaires PHP + sessions) :
+- `index.php` : Connexion (POST → `User::login()` → session)
+- `register.php` : Inscription (POST → `User::create()` → session)
+- `logout.php` : Déconnexion (`session_destroy()`)
+- `includes/session.php` : Fonctions de gestion de session
+
 ### 🔌 API REST
 
-#### Authentification (`/api/auth.php`)
-```bash
-POST /api/auth.php
-{
-  "action": "login",
-  "email": "didier@mycave.com",
-  "password": "password"
-}
+**Endpoint unique** : `/api/wines.php`
 
-POST /api/auth.php
-{
-  "action": "register",
-  "name": "Nouveau User",
-  "email": "user@example.com",
-  "password": "motdepasse"
-}
-
-GET /api/auth.php?action=me
-# Retourne les infos de l'utilisateur connecté
-```
-
-#### Vins (`/api/wines.php`)
+#### Gestion des vins (`/api/wines.php`)
 ```bash
 GET /api/wines.php
-# Liste tous les vins de l'utilisateur
+# Liste tous les vins de l'utilisateur connecté
+# Réponse : {success: true, wines: [...], count: 12}
 
 POST /api/wines.php
 # FormData avec name, year, grapes, country, region, description, picture
+# Réponse : {success: true, message: "Bouteille ajoutée", wine_id: 15}
 
 PUT /api/wines.php
-# JSON avec id + champs à modifier
+# FormData avec id + champs à modifier (picture optionnel)
+# Réponse : {success: true, message: "Bouteille mise à jour"}
 
 DELETE /api/wines.php?id=123
 # Supprime le vin avec l'id 123
+# Réponse : {success: true, message: "Bouteille supprimée"}
 ```
+
+**Authentification** : Toutes les requêtes nécessitent une session PHP active (vérification via `isLoggedIn()`)
 
 ## 🗄️ Base de Données
 

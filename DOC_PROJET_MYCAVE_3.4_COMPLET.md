@@ -26,35 +26,27 @@ Le code JavaScript est intégré dans **deux fichiers principaux** :
 Le formulaire d'ajout/modification de vin utilise `FormData` pour envoyer les données, y compris les fichiers uploadés, via l'API Fetch :
 
 ```javascript
-// Extrait de add-wine.php (lignes ~145-175)
+// Extrait de add-wine.php (lignes ~143-170)
 document.getElementById('wineForm').addEventListener('submit', async (e) => {
   e.preventDefault(); // Empêche le rechargement de la page
   
   const formData = new FormData(e.target); // Récupère toutes les données du formulaire
   
+  // En mode édition, on ajoute simplement l'ID
+  if (isEdit) {
+    formData.append('id', wineData.id);
+  }
+  
   try {
-    let response;
-    
-    if (isEdit) {
-      // En mode édition, on simule un PUT via POST + _method
-      formData.append('_method', 'PUT');
-      formData.append('id', wineData.id);
-      response = await fetch('api/wines.php', {
-        method: 'POST',
-        body: formData
-      });
-    } else {
-      // Mode création standard
-      response = await fetch('api/wines.php', {
-        method: 'POST',
-        body: formData
-      });
-    }
+    const response = await fetch('api/wines.php', {
+      method: 'POST', // Toujours POST (création ET édition)
+      body: formData
+    });
     
     const data = await response.json();
     
     if (data.success) {
-      showMessage('🍷 Bouteille sauvegardée avec succès !', 'success');
+      showMessage(data.message || '🍷 Bouteille sauvegardée avec succès !', 'success');
       setTimeout(() => {
         window.location.href = 'dashboard.php'; // Redirection après succès
       }, 1500);
@@ -63,16 +55,20 @@ document.getElementById('wineForm').addEventListener('submit', async (e) => {
     }
   } catch (error) {
     showMessage('Erreur de connexion au serveur', 'error');
+    console.error('Erreur:', error);
   }
 });
 ```
 
+**Note importante** : L'API détecte automatiquement s'il s'agit d'une création ou d'une modification en vérifiant la présence du champ `id` dans les données POST. Cette approche simplifie le code JavaScript en évitant la simulation de méthode PUT.
+
 ##### 2. Appels asynchrones à l'API
 
-Toutes les interactions avec la base de données passent par les endpoints REST :
+Toutes les interactions avec les données des vins passent par l'endpoint REST :
 
 - **`api/wines.php`** : opérations CRUD sur les vins (GET, POST, PUT, DELETE)
-- **`api/auth.php`** : authentification et gestion des sessions
+
+**Note** : L'authentification utilise une approche traditionnelle (formulaires PHP + sessions), pas d'API REST.
 
 Exemple de récupération des vins de l'utilisateur connecté :
 

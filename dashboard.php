@@ -90,11 +90,11 @@ $wineCount = $wine->countByUserId($user['id']);
               Ajouter une bouteille
             </button>
           </div>
-        `;
+        `; // contenu pour cave vide
         return;
       }
       
-      container.innerHTML = wines.map(wine => createWineCard(wine)).join('');
+      container.innerHTML = wines.map(wine => createWineCard(wine)).join(''); // Génération dynamique des cartes
     }
 
     // Échapper les caractères HTML pour la sécurité
@@ -138,6 +138,7 @@ $wineCount = $wine->countByUserId($user['id']);
 
     // Supprimer une bouteille
     async function deleteWine(wineId) {
+        // Confirmation utilisateur
       if (!confirm('Êtes-vous sûr de vouloir supprimer cette bouteille ?')) {
         return;
       }
@@ -151,7 +152,7 @@ $wineCount = $wine->countByUserId($user['id']);
         
         if (data.success) {
           showMessage('Bouteille supprimée avec succès', 'success', 'assets/img/trash-arrow-up.svg');
-          await loadWines(); // Recharger la liste
+          await loadWines(); // Recharge uniquement la liste des vins
         } else {
           showError(data.error || 'Erreur lors de la suppression');
         }
