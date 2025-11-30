@@ -138,24 +138,25 @@ $wineCount = $wine->countByUserId($user['id']);
 
     // Supprimer une bouteille
     async function deleteWine(wineId) {
-        // Confirmation utilisateur
+        // Confirmation utilisateur dans une boite de dialogue native du navigateur
       if (!confirm('Êtes-vous sûr de vouloir supprimer cette bouteille ?')) {
-        return;
+        return; // Annuler la suppression si l'utilisateur clique sur "Annuler"
       }
-      
+      // L'utilisateur confirme : on continue la suppression
       try {
         const response = await fetch(`api/wines.php?id=${wineId}`, {
-          method: 'DELETE'
+          method: 'DELETE' // Méthode DELETE pour la suppression
         });
         
         const data = await response.json();
         
-        if (data.success) {
+        if (data.success) { // Suppression réussie côté serveur
+            // Afficher un message de succès avec l'icône de poubelle
           showMessage('Bouteille supprimée avec succès', 'success', 'assets/img/trash-arrow-up.svg');
-          await loadWines(); // Recharge uniquement la liste des vins
-        } else {
+          await loadWines(); // Recharge uniquement la liste des vins depuis l'API, retire la carte du DOM et met à jour le compteur
+        } else { // Erreur côté serveur
           showError(data.error || 'Erreur lors de la suppression');
-        }
+        } // erreur de connexion (réseau, serveur injoignable, etc.)
       } catch (error) {
         showError('Erreur de connexion');
       }
@@ -179,7 +180,7 @@ $wineCount = $wine->countByUserId($user['id']);
 
     // Afficher un message
     function showMessage(message, type, icon = null) {
-      // Créer ou utiliser un div de message existant
+      // Créer une div de message
       let messageDiv = document.getElementById('message');
       if (!messageDiv) {
         messageDiv = document.createElement('div');

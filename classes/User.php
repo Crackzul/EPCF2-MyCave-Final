@@ -8,8 +8,8 @@ class User {
     public $id;
     public $email;
     public $password;
-    public $name;
-    public $role;
+    public $name;   // correspond à la colonne username
+    public $role;   // correspond à la colonne roles
 
     public function __construct() {
         $database = new Database();
@@ -18,7 +18,7 @@ class User {
 
     public function emailExists($email) {
         $query = "SELECT id FROM " . $this->table_name . " 
-                  WHERE email1 = :email LIMIT 1";
+                  WHERE email = :email LIMIT 1";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":email", $email);
@@ -34,7 +34,7 @@ class User {
         }
 
         $query = "INSERT INTO " . $this->table_name . " 
-                  SET email1=:email, password1=:password, username=:name, roles=:role";
+                  SET email = :email, password = :password, username = :name, roles = :role";
 
         $stmt = $this->conn->prepare($query);
         $this->password = password_hash($this->password, PASSWORD_DEFAULT);
@@ -52,9 +52,9 @@ class User {
     }
 
     public function login($email, $password) {
-        $query = "SELECT id, email1, password1, username, roles
+        $query = "SELECT id, email, password, username, roles
                   FROM " . $this->table_name . " 
-                  WHERE email1 = :email LIMIT 1";
+                  WHERE email = :email LIMIT 1";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":email", $email);
@@ -63,9 +63,9 @@ class User {
         if($stmt->rowCount() > 0) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             
-            if(password_verify($password, $row['password1'])) {
+            if(password_verify($password, $row['password'])) {
                 $this->id = $row['id'];
-                $this->email = $row['email1'];
+                $this->email = $row['email'];
                 $this->name = $row['username'];
                 $this->role = $row['roles'];
                 return true;
@@ -75,7 +75,8 @@ class User {
     }
 
     public function getUserById($id) {
-        $query = "SELECT id, email1, username, roles, created_at
+        // La table user nettoyée n'a plus created_at, on sélectionne uniquement les colonnes existantes
+        $query = "SELECT id, email, username, roles
                   FROM " . $this->table_name . " 
                   WHERE id = :id LIMIT 1";
 

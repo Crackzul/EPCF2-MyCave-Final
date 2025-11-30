@@ -56,7 +56,6 @@ $wineCount = $wine->countByUserId($user['id']);
   </header>
 
   <main class="add-wine-main">
-    <!-- IMAGE DE FOND IDENTIQUE AU DASHBOARD -->
     <div class="background-form">
       <img src="assets/img/ChatGPT Image 16 juil. 2025, 11_16_29.png" alt="Cave background" class="cave-image">
     </div>
@@ -158,7 +157,7 @@ $wineCount = $wine->countByUserId($user['id']);
         const data = await response.json();
         
         if (data.success) {
-          showMessage(data.message || '🍷 Bouteille sauvegardée avec succès !', 'success');
+          showMessage(data.message || 'Bouteille sauvegardée avec succès !', 'success');
           setTimeout(() => {
             window.location.href = 'dashboard.php';
           }, 1500);

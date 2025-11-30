@@ -29,10 +29,6 @@ switch($method) {
             addWine();
         }
         break;
-    case 'PUT':
-        // Gardé pour compatibilité (non utilisé actuellement)
-        updateWine();
-        break;
     case 'DELETE':
         deleteWine();
         break;
@@ -41,10 +37,11 @@ switch($method) {
         echo json_encode(['error' => 'Méthode non autorisée']);
 }
 
+
 function getWines() {
     global $user;
     
-    $wine = new Wine(); // Création de l'instance de la classe Wine
+    $wine = new Wine(); // Création d'un' Wine
     $wines = $wine->getByUserId($user['id']); // Récupérer les bouteilles de l'utilisateur
     
     echo json_encode([
@@ -106,8 +103,7 @@ function addWine() {
 
 function updateWine() {
     global $user;
-    
-    // Les données de formulaire multipart ne sont pas dans php://input
+
     // On utilise $_POST pour les champs et $_FILES pour les fichiers.
     $wine_id = $_POST['id'] ?? '';
 
@@ -192,12 +188,7 @@ function deleteWine() {
 
 function uploadImage($file) {
     $upload_dir = '../uploads/';
-    
-    // Créer le dossier s'il n'existe pas
-    if (!file_exists($upload_dir)) {
-        mkdir($upload_dir, 0777, true);
-    }
-    
+
     // Vérifier le type de fichier
     $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
     if (!in_array($file['type'], $allowed_types)) {
@@ -208,7 +199,8 @@ function uploadImage($file) {
     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
     $filename = uniqid() . '.' . $extension;
     $filepath = $upload_dir . $filename;
-    
+
+    // Déplacement final du fichier
     if (move_uploaded_file($file['tmp_name'], $filepath)) {
         return $filename;
     }

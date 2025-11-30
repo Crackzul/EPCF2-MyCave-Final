@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = new User();
         $user->name = $name;
         $user->email = $email;
-        $user->password = $password;
+        $user->password = $password; // Mot de passe en clair transmis à l'objet
         $user->role = 'ROLE_USER';
 
         if ($user->create()) {
