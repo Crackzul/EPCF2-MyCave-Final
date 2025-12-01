@@ -540,7 +540,8 @@ _(Tu peux renvoyer ici vers `REGISTRATION_FEATURE.md` qui détaille davantage ce
 - **Méthodes HTTP supportées** :
   - `GET` : liste des vins de l'utilisateur connecté
   - `POST` : création d'un nouveau vin (avec upload d'image)
-  - `PUT` : mise à jour d'un vin existant (avec upload optionnel)
+  - `POST` + `_method=PUT` : mise à jour d'un vin existant (avec upload optionnel)
+    - **Note technique** : La méthode POST est utilisée pour les modifications car `multipart/form-data` (nécessaire pour l'upload de fichiers) ne supporte pas nativement les méthodes PUT/PATCH. Le paramètre `_method=PUT` permet de simuler la méthode PUT côté serveur, c'est une pratique courante dans les frameworks web.
   - `DELETE` : suppression d'un vin
 
 - **Format de données** : 
@@ -599,15 +600,164 @@ Décrire un scénario de test représentatif (par exemple, la gestion complète 
 
 #### 4.3.3. Veille technologique
 
-Décrire brièvement la veille effectuée durant le projet (lecture d’articles, documentation, tutoriels) :
+Tout au long du projet MyCave, j'ai effectué une veille technologique ciblée pour comprendre et appliquer les bonnes pratiques de développement web. Voici les ressources principales que j'ai consultées et ce que j'en ai retenu :
 
-- sur la sécurité des mots de passe et des sessions en PHP,
-- sur les bonnes pratiques REST (statuts HTTP, messages d’erreur),
-- sur les outils modernes de front (SCSS, frameworks JS) et leur intérêt éventuel pour MyCave.
+##### 1) Sécurité des mots de passe et des sessions en PHP
+
+**Sources consultées :**
+- Documentation officielle PHP : [password_hash()](https://www.php.net/manual/fr/function.password-hash.php) et [password_verify()](https://www.php.net/manual/fr/function.password-verify.php)
+- Tutoriel OpenClassrooms : "Gérer l'authentification des utilisateurs en PHP"
+- Article MDN : "Sécurité des sites web - Bonnes pratiques"
+
+**Ce que j'ai appris :**
+- Ne **jamais** stocker les mots de passe en clair dans la base de données
+- Utiliser `password_hash()` avec `PASSWORD_DEFAULT` (utilise automatiquement bcrypt, bien plus sûr que md5 ou sha1)
+- Vérifier les mots de passe avec `password_verify()` au lieu de comparer directement les hash
+- Gérer les sessions PHP pour protéger les pages et l'accès aux données
+
+**Application dans MyCave :**
+```php
+// Dans classes/User.php - Ligne 31 (inscription)
+$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+// Dans classes/User.php - Ligne 61 (connexion)
+if (password_verify($password, $user['password'])) {
+    return $user;
+}
+```
+
+##### 2) Bonnes pratiques des API REST
+
+**Sources consultées :**
+- Documentation MDN : [Codes de statut HTTP](https://developer.mozilla.org/fr/docs/Web/HTTP/Status)
+- Article : "REST API Best Practices" sur dev.to
+- Tutoriel YouTube : "Créer une API REST en PHP"
+
+**Ce que j'ai appris :**
+- Utiliser les **bons codes HTTP** pour indiquer le résultat d'une requête :
+  - `200` : succès (lecture, mise à jour)
+  - `201` : création réussie
+  - `204` : suppression réussie (pas de contenu à renvoyer)
+  - `400` : erreur dans les données envoyées
+  - `401` : utilisateur non connecté
+  - `404` : ressource introuvable
+  - `500` : erreur serveur
+- Toujours renvoyer du **JSON structuré** avec au minimum `{"success": true/false}`
+- Comprendre les méthodes HTTP : `GET` (lire), `POST` (créer), `PUT` (modifier), `DELETE` (supprimer)
+- **Contrainte technique** : lorsqu'on envoie des fichiers (FormData), on doit utiliser POST même pour les modifications, et simuler PUT via un paramètre `_method` (c'est une pratique standard)
+
+**Application dans MyCave :**
+```php
+// Dans api/wines.php - Ligne 11 (vérification connexion)
+if (!isLoggedIn()) {
+    http_response_code(401); // Code HTTP explicite
+    echo json_encode(['error' => 'Non autorisé']);
+    exit();
+}
+
+// Dans api/wines.php - Ligne 149 (suppression réussie)
+http_response_code(200);
+echo json_encode([
+    'success' => true,
+    'message' => 'Vin supprimé avec succès'
+]);
+```
+
+##### 3) Outils modernes de CSS : SCSS
+
+**Sources consultées :**
+- Documentation officielle Sass : [sass-lang.com](https://sass-lang.com/guide)
+- Tutoriel : "Apprendre SCSS en 20 minutes" sur YouTube
+- Article : "Pourquoi utiliser SCSS plutôt que CSS ?"
+
+**Ce que j'ai appris :**
+- SCSS permet d'organiser le code CSS en **plusieurs fichiers** (un par composant)
+- Utilisation de **variables** pour centraliser les couleurs et tailles (plus facile à modifier)
+- Les **mixins** permettent de réutiliser des blocs de code (exemple : border-radius identique partout)
+- Le code SCSS se **compile** en CSS classique via npm
+
+**Application dans MyCave :**
+```scss
+// assets/scss/abstract/_variables.scss
+$primary-color: #722f37;    // Couleur principale (bordeaux)
+$success-color: #28a745;     // Vert pour les messages de succès
+$border-radius: 8px;         // Arrondi uniforme
+
+// assets/scss/components/_buttons.scss
+.btn-primary {
+    background: $primary-color;  // Variable réutilisée
+    border-radius: $border-radius;
+}
+```
+
+**Commande de compilation :**
+```bash
+npm run sass  # Transforme le SCSS en CSS
+```
+
+##### 4) JavaScript moderne : Fetch API et async/await
+
+**Sources consultées :**
+- Documentation MDN : [Fetch API](https://developer.mozilla.org/fr/docs/Web/API/Fetch_API/Using_Fetch)
+- Article : "Async/await : enfin des promesses faciles à lire"
+- Tutoriel : "Remplacer XMLHttpRequest par Fetch"
+
+**Ce que j'ai appris :**
+- `fetch()` est la méthode **moderne** pour faire des requêtes HTTP en JavaScript (remplace l'ancien XMLHttpRequest)
+- `async/await` rend le code **plus lisible** qu'avec `.then().catch()`
+- Toujours gérer les erreurs avec un `try/catch` pour éviter les bugs silencieux
+
+**Application dans MyCave :**
+```javascript
+// dashboard.php - Ligne 70 (récupération des vins)
+async function loadWines() {
+    try {
+        const response = await fetch('api/wines.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            displayWines(data.wines);
+        }
+    } catch (error) {
+        showError('Erreur de connexion');
+    }
+}
+```
+
+##### Synthèse de la veille
+
+| Thème | Source principale | Apport concret au projet |
+|-------|------------------|--------------------------|
+| Sécurité mots de passe | Documentation PHP officielle | `password_hash()` et `password_verify()` dans User.php |
+| API REST | MDN + dev.to | Codes HTTP 200/201/401/404 dans api/wines.php |
+| SCSS | sass-lang.com | Organisation du CSS en dossiers (abstract, components, layout) |
+| JavaScript moderne | MDN Fetch API | Fonction `loadWines()` avec async/await dans dashboard.php |
+
+**Fréquence de la veille :** Consultations ponctuelles lors de chaque nouvelle fonctionnalité à implémenter (environ 1-2h par semaine), avec prise de notes dans un fichier `NOTES_VEILLE.md` (non versioned).
+
+**Pistes d'amélioration identifiées grâce à la veille :**
+- Ajouter une protection **CSRF** (Cross-Site Request Forgery) avec des tokens
+- Forcer **HTTPS** en production pour sécuriser les sessions
+- Implémenter une **pagination** pour les grandes listes de vins (actuellement toutes les bouteilles chargées d'un coup)
+- Utiliser **Vite.js** comme bundler moderne pour remplacer la compilation SCSS manuelle
 
 ---
 
-## 5. Correspondance avec les compétences du référentiel
+## 5. Résumé du Projet
+
+**MyCave** est une application web full-stack de gestion de cave à vin personnelle développée dans le cadre de ma formation **Développeur Web et Web Mobile (DWWM)**. Elle permet à chaque utilisateur authentifié de gérer son stock de bouteilles avec un système complet de CRUD (création, lecture, modification, suppression).
+
+Le projet couvre l'intégralité de la chaîne de développement web moderne. Le **front-end** utilise HTML5/CSS3 avec une architecture SCSS modulaire et JavaScript ES6+ (Fetch API, async/await) pour des interactions dynamiques sans rechargement de page. Le design responsive (3/2/1 colonnes) s'adapte à tous les écrans. Le **back-end** repose sur PHP orienté objet avec deux classes principales (User, Wine) gérant la logique métier. Une API REST (`api/wines.php`) expose les opérations CRUD avec authentification par session et codes HTTP appropriés (200, 201, 401, 404). La **base de données** MySQL contient deux tables relationnelles (users, wines) interrogées via PDO avec requêtes préparées pour la sécurité.
+
+Les points forts incluent : authentification sécurisée avec `password_hash`/`password_verify`, isolation des données par utilisateur, upload d'images, gestion d'erreurs robuste et documentation complète. L'architecture respecte la séparation des responsabilités avec trois couches distinctes (présentation, métier, données).
+
+Ce projet démontre les **8 compétences du référentiel DWWM** : maquettage, intégration HTML/CSS, dynamisation JavaScript, conception BDD, accès aux données PDO, composants métier API, et documentation technique. Les défis surmontés incluent la gestion de FormData avec upload (limitation POST/PUT), le debugging d'erreurs asynchrones et l'organisation SCSS. Les perspectives d'évolution identifiées sont : ajout de tokens CSRF, pagination, filtres de recherche et Progressive Web App.
+
+**Durée :** Plusieurs semaines | **Technologies :** PHP 7.4+, MySQL, JavaScript ES6+, SCSS | **Environnement :** WAMP, PHPStorm, Git, npm
+
+---
+
+## 6. Correspondance avec les compétences du référentiel
 
 | N° CP | Compétence professionnelle                                                       | Comment MyCave la met en œuvre                                                                                             |
 |:-----:|----------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
@@ -624,13 +774,13 @@ Tu peux compléter cette table avec des références précises à des fichiers /
 
 ---
 
-## 6. Synthèse personnelle
+## 7. Synthèse personnelle
 
 _(Section à rédiger en ton nom : ce que tu as appris, les difficultés rencontrées, les compétences que tu estimes avoir particulièrement développées grâce à MyCave.)_
 
 - Bilan sur la partie front-end.
 - Bilan sur la partie back-end / BDD.
-- Bilan sur l’organisation du travail et la collaboration éventuelle.
+- Bilan sur l'organisation du travail et la collaboration éventuelle.
 
 ---
 
