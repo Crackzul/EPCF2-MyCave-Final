@@ -14,7 +14,7 @@ class Database {
         try {
             // 1. On définit les paramètres de connexion
             $host = 'localhost';        // Serveur MySQL (WAMP en local)
-            $dbName = 'mycave_db';     // Nom de la base de données
+            $dbName = 'mycave_v2';     // Nom de la base de données
             $charset = 'utf8mb4';      // Encodage conseillé
             $user = 'root';            // Utilisateur MySQL par défaut sous WAMP
             $password = '';            // Mot de passe vide par défaut sous WAMP

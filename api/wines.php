@@ -38,10 +38,11 @@ switch($method) {
 }
 
 
-function getWines() {
+function getWines(): void
+{
     global $user;
     
-    $wine = new Wine(); // Création d'un' Wine
+    $wine = new Wine(); // Création d'un objet Wine
     $wines = $wine->getByUserId($user['id']); // Récupérer les bouteilles de l'utilisateur
     
     echo json_encode([
@@ -51,7 +52,8 @@ function getWines() {
     ]);
 }
 
-function addWine() {
+function addWine(): void
+{
     global $user;
     
     // Valider les données
@@ -101,7 +103,8 @@ function addWine() {
     }
 }
 
-function updateWine() {
+function updateWine(): void
+{
     global $user;
 
     // On utilise $_POST pour les champs et $_FILES pour les fichiers.
@@ -163,7 +166,8 @@ function updateWine() {
     }
 }
 
-function deleteWine() {
+function deleteWine(): void
+{
     global $user;
     
     $wine_id = $_GET['id'] ?? '';

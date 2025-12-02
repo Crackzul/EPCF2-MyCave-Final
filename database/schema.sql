@@ -1,64 +1,103 @@
 -- SQL (MySQL) : création des tables et exemples d'inserts
 
-USE `mycave_db`;
+USE `mycave_v2`;
 
 -- Table user
 
-CREATE TABLE `user` (
+CREATE TABLE IF NOT EXISTS `user` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `username` VARCHAR(100) NOT NULL,
+  `username` VARCHAR(255) NOT NULL,
   `email` VARCHAR(255) NOT NULL,
   `password` VARCHAR(255) NOT NULL,
   `roles` VARCHAR(255) NOT NULL DEFAULT 'ROLE_USER',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_user_email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Table country
+
+CREATE TABLE IF NOT EXISTS `country` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_country_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table region
+
+CREATE TABLE IF NOT EXISTS `region` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `country_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_region_country_idx` (`country_id`),
+  CONSTRAINT `fk_region_country` FOREIGN KEY (`country_id`) REFERENCES `country` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  UNIQUE KEY `uk_region_country` (`name`, `country_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table grape
+
+CREATE TABLE IF NOT EXISTS `grape` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_grape_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Table wine
 
-CREATE TABLE `wine` (
+CREATE TABLE IF NOT EXISTS `wine` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `user_id` INT DEFAULT NULL,
+  `user_id` INT NOT NULL,
+  `region_id` INT NOT NULL,
   `name` VARCHAR(255) NOT NULL,
-  `year` YEAR DEFAULT NULL,
-  `grapes` VARCHAR(255) DEFAULT NULL,
-  `country` VARCHAR(100) DEFAULT NULL,
-  `region` VARCHAR(100) DEFAULT NULL,
+  `year` INT NOT NULL,
   `description` TEXT DEFAULT NULL,
   `picture` VARCHAR(255) DEFAULT NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_wine_user_idx` (`user_id`),
-  CONSTRAINT `fk_wine_user` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  KEY `fk_wine_region_idx` (`region_id`),
+  CONSTRAINT `fk_wine_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_wine_region` FOREIGN KEY (`region_id`) REFERENCES `region` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Exemples d'INSERT pour la table user
-INSERT INTO `user` (`id`, `username`, `email`, `password`, `roles`) VALUES
-(1, 'didier', 'didier@example.com', '$2y$12$EXAMPLEHASHFORPASSWORD1', 'ROLE_USER'),
-(2, 'Marty Didier', 'boutcamp@gmail.com', '$2y$12$EXAMPLEHASHFORPASSWORD2', 'ROLE_USER');
+-- Pivot wine_grape
 
--- Exemples d'INSERT pour la table wine
-INSERT INTO `wine` (`user_id`,`name`,`year`,`grapes`,`country`,`region`,`description`,`picture`) VALUES
-(1, 'CHATEAU DE SAINT COSME', 2009, 'Grenache / Syrah', 'France', 'Southern Rhone / Gigondas',
- 'The aromas of fruit and spice...', 'saint_cosme.jpg'),
-(1, 'LAN RIOJA CRIANZA', 2006, 'Tempranillo', 'Spain', 'Rioja',
- 'A resurgence of interest in boutique vineyards...', 'lan_rioja.jpg'),
-(1, 'MARGERUM SYBARITE', 2010, 'Sauvignon Blanc', 'USA', 'California Central Coast',
- 'The cache of a fine Cabernet in ones wine cellar...', 'margerum.jpg'),
-(1, 'REX HILL', 2009, 'Pinot Noir', 'USA', 'Oregon',
- 'One cannot doubt that this will be the wine served...', 'rex_hill.jpg');
+CREATE TABLE IF NOT EXISTS `wine_grape` (
+  `wine_id` INT NOT NULL,
+  `grape_id` INT NOT NULL,
+  PRIMARY KEY (`wine_id`, `grape_id`),
+  KEY `fk_wine_grape_grape_idx` (`grape_id`),
+  CONSTRAINT `fk_wine_grape_wine` FOREIGN KEY (`wine_id`) REFERENCES `wine` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_wine_grape_grape` FOREIGN KEY (`grape_id`) REFERENCES `grape` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Vins d'exemple supplémentaires
-INSERT INTO wine (user_id, name, year, grapes, country, region, description, picture) VALUES
-(2, 'Château Margaux', 2015, 'Cabernet Sauvignon, Merlot', 'France', 'Bordeaux', 'Un grand cru exceptionnel avec des arômes complexes de fruits rouges et d''épices. Parfait pour les grandes occasions.'),
-(2, 'Domaine de la Côte', 2018, 'Pinot Noir', 'France', 'Bourgogne', 'Un pinot noir élégant aux notes de cerise et de sous-bois. Idéal avec les viandes rouges.'),
-(2, 'Barolo Brunate', 2016, 'Nebbiolo', 'Italie', 'Piémont', 'Un Barolo puissant et tannique, avec une longue garde. Notes de rose et de truffe.'),
-(2, 'Chablis Premier Cru', 2019, 'Chardonnay', 'France', 'Bourgogne', 'Un blanc minéral et frais, parfait avec les fruits de mer et poissons.'),
-(2, 'Rioja Gran Reserva', 2014, 'Tempranillo', 'Espagne', 'Rioja', 'Un rouge espagnol complexe, élevé en fût de chêne. Notes de vanille et de fruits mûrs.'),
-(2, 'Champagne Dom Pérignon', 2012, 'Chardonnay, Pinot Noir', 'France', 'Champagne', 'Un champagne d''exception aux bulles fines et persistantes. Parfait pour célébrer.'),
-(2, 'Sancerre Les Monts', 2020, 'Sauvignon Blanc', 'France', 'Loire', 'Un blanc sec et minéral avec des notes d''agrumes et de pierre à fusil.'),
-(2, 'Côtes du Rhône Villages', 2017, 'Grenache, Syrah', 'France', 'Rhône', 'Un rouge généreux aux arômes de garrigue et d''épices. Excellent rapport qualité-prix.'),
-(2, 'Brunello di Montalcino', 2015, 'Sangiovese', 'Italie', 'Toscane', 'Un grand vin italien structuré, aux tanins soyeux et à la finale persistante.'),
-(2, 'Pouilly-Fumé', 2019, 'Sauvignon Blanc', 'France', 'Loire', 'Un blanc expressif aux arômes fumés caractéristiques. Parfait à l''apéritif.'),
-(2, 'Châteauneuf-du-Pape', 2016, 'Grenache, Syrah, Mourvèdre', 'France', 'Rhône', 'Un rouge puissant et complexe, reflet du terroir exceptionnel des galets roulés.'),
-(2, 'Moscato d''Asti', 2021, 'Moscato', 'Italie', 'Piémont', 'Un blanc doux et pétillant, parfait pour les desserts ou l''apéritif.');
+-- Jeux de données d'exemple
+INSERT INTO `user` (`id`, `username`, `email`, `password`, `roles`)
+VALUES
+  (1, 'didier', 'didier@example.com', '$2y$12$EXAMPLEHASHFORPASSWORD1', 'ROLE_USER'),
+  (2, 'Marty Didier', 'boutcamp@gmail.com', '$2y$12$EXAMPLEHASHFORPASSWORD2', 'ROLE_USER')
+ON DUPLICATE KEY UPDATE
+  `username` = VALUES(`username`),
+  `password` = VALUES(`password`),
+  `roles` = VALUES(`roles`);
+
+INSERT INTO `country` (`name`) VALUES
+  ('France'), ('Spain'), ('USA'), ('Italy')
+ON DUPLICATE KEY UPDATE `name` = VALUES(`name`);
+
+INSERT INTO `region` (`name`, `country_id`)
+SELECT region_name, country_id FROM (
+  SELECT 'Southern Rhone / Gigondas' AS region_name, (SELECT id FROM country WHERE name = 'France') AS country_id
+  UNION ALL SELECT 'Rioja', (SELECT id FROM country WHERE name = 'Spain')
+  UNION ALL SELECT 'California Central Coast', (SELECT id FROM country WHERE name = 'USA')
+  UNION ALL SELECT 'Oregon', (SELECT id FROM country WHERE name = 'USA')
+) AS seeds
+ON DUPLICATE KEY UPDATE `country_id` = VALUES(`country_id`);
+
+INSERT INTO `grape` (`name`) VALUES
+  ('Grenache'), ('Syrah'), ('Tempranillo'), ('Sauvignon Blanc'), ('Pinot Noir'), ('Nebbiolo'), ('Chardonnay'), ('Merlot')
+ON DUPLICATE KEY UPDATE `name` = VALUES(`name`);
