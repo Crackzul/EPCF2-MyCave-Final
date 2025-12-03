@@ -86,15 +86,28 @@ ON DUPLICATE KEY UPDATE
   `roles` = VALUES(`roles`);
 
 INSERT INTO `country` (`name`) VALUES
-  ('France'), ('Spain'), ('USA'), ('Italy')
+  ('France'), ('Spain'), ('USA'), ('Italy'), ('Argentina')
 ON DUPLICATE KEY UPDATE `name` = VALUES(`name`);
 
 INSERT INTO `region` (`name`, `country_id`)
 SELECT region_name, country_id FROM (
-  SELECT 'Southern Rhone / Gigondas' AS region_name, (SELECT id FROM country WHERE name = 'France') AS country_id
+  SELECT 'Bordeaux' AS region_name, (SELECT id FROM country WHERE name = 'France') AS country_id
+  UNION ALL SELECT 'Bourgogne', (SELECT id FROM country WHERE name = 'France')
+  UNION ALL SELECT 'Champagne', (SELECT id FROM country WHERE name = 'France')
+  UNION ALL SELECT 'Vallée du Rhône', (SELECT id FROM country WHERE name = 'France')
+  UNION ALL SELECT 'Loire', (SELECT id FROM country WHERE name = 'France')
   UNION ALL SELECT 'Rioja', (SELECT id FROM country WHERE name = 'Spain')
-  UNION ALL SELECT 'California Central Coast', (SELECT id FROM country WHERE name = 'USA')
-  UNION ALL SELECT 'Oregon', (SELECT id FROM country WHERE name = 'USA')
+  UNION ALL SELECT 'Ribera del Duero', (SELECT id FROM country WHERE name = 'Spain')
+  UNION ALL SELECT 'Priorat', (SELECT id FROM country WHERE name = 'Spain')
+  UNION ALL SELECT 'Napa Valley', (SELECT id FROM country WHERE name = 'USA')
+  UNION ALL SELECT 'Sonoma County', (SELECT id FROM country WHERE name = 'USA')
+  UNION ALL SELECT 'Willamette Valley', (SELECT id FROM country WHERE name = 'USA')
+  UNION ALL SELECT 'Tuscany', (SELECT id FROM country WHERE name = 'Italy')
+  UNION ALL SELECT 'Piedmont', (SELECT id FROM country WHERE name = 'Italy')
+  UNION ALL SELECT 'Veneto', (SELECT id FROM country WHERE name = 'Italy')
+  UNION ALL SELECT 'Mendoza', (SELECT id FROM country WHERE name = 'Argentina')
+  UNION ALL SELECT 'Salta', (SELECT id FROM country WHERE name = 'Argentina')
+  UNION ALL SELECT 'Patagonia', (SELECT id FROM country WHERE name = 'Argentina')
 ) AS seeds
 ON DUPLICATE KEY UPDATE `country_id` = VALUES(`country_id`);
 

@@ -103,8 +103,8 @@ $wineCount = $wine->countByUserId($user['id']);
           <div id="grape-list" class="grape-list">
             <?php foreach ($defaultGrapes as $grape): ?>
               <label class="grape-option">
-                <input type="checkbox" name="grapes[]" value="<?= $grape['id'] ?>">
                 <span><?= htmlspecialchars($grape['name']) ?></span>
+                <input type="checkbox" name="grapes[]" value="<?= $grape['id'] ?>">
               </label>
             <?php endforeach; ?>
           </div>
@@ -173,6 +173,7 @@ $wineCount = $wine->countByUserId($user['id']);
       if (isEdit && wineData) {
         prefillForm();
       }
+      enforceDescriptionMaxLines();
     });
 
     async function hydrateReferenceData() {
@@ -210,14 +211,14 @@ $wineCount = $wine->countByUserId($user['id']);
       grapes.forEach(grape => {
         const label = document.createElement('label');
         label.className = 'grape-option';
+        const span = document.createElement('span');
+        span.textContent = grape.name;
         const input = document.createElement('input');
         input.type = 'checkbox';
         input.name = 'grapes[]';
         input.value = grape.id;
-        const span = document.createElement('span');
-        span.textContent = grape.name;
-        label.appendChild(input);
         label.appendChild(span);
+        label.appendChild(input);
         container.appendChild(label);
       });
     }
@@ -231,7 +232,9 @@ $wineCount = $wine->countByUserId($user['id']);
 
     function prefillForm() {
       document.querySelectorAll('input[name="grapes[]"]').forEach(input => {
-        if (wineData.grapes && wineData.grapes.split(',').map(g => g.trim().toLowerCase()).includes(input.nextElementSibling.textContent.toLowerCase())) {
+        const grapeLabel = input.closest('label');
+        const grapeName = grapeLabel ? grapeLabel.querySelector('span')?.textContent : '';
+        if (wineData.grapes && grapeName && wineData.grapes.split(',').map(g => g.trim().toLowerCase()).includes(grapeName.trim().toLowerCase())) {
           input.checked = true;
         }
       });
@@ -302,6 +305,35 @@ $wineCount = $wine->countByUserId($user['id']);
       setTimeout(() => {
         messageDiv.style.display = 'none';
       }, 5000);
+    }
+
+    function enforceDescriptionMaxLines() {
+      const descriptionField = document.querySelector('textarea[name="description"]');
+      const maxLines = 3;
+      if (!descriptionField) return;
+
+      const clampLines = () => {
+        const lines = descriptionField.value.split(/\r?\n/);
+        if (lines.length > maxLines) {
+          descriptionField.value = lines.slice(0, maxLines).join('\n');
+        }
+      };
+
+      descriptionField.addEventListener('input', clampLines);
+      descriptionField.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter') return;
+        const value = descriptionField.value;
+        const selectionStart = descriptionField.selectionStart;
+        const selectionEnd = descriptionField.selectionEnd;
+        const before = value.slice(0, selectionStart);
+        const after = value.slice(selectionEnd);
+        const projected = `${before}\n${after}`;
+        if (projected.split(/\r?\n/).length > maxLines) {
+          event.preventDefault();
+        }
+      });
+
+      clampLines();
     }
 
     // Pré-remplir le formulaire en mode édition
