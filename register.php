@@ -83,13 +83,13 @@ $base_url = "$protocol://$host$base_dir/";
         <h2>Inscription</h2>
 
         <?php if ($error): ?>
-            <div class="error-message" style="color: #ffb6c1; background: rgba(255,0,0,0.2); padding: 10px; border-radius: 5px; margin-bottom: 1rem; text-align: center;">
+            <div class="message error">
                 <?= htmlspecialchars($error) ?>
             </div>
         <?php endif; ?>
 
         <?php if ($success): ?>
-            <div class="success-message" style="color: #b6ffb6; background: rgba(0,255,0,0.2); padding: 10px; border-radius: 5px; margin-bottom: 1rem; text-align: center;">
+            <div class="message success">
                 <?= htmlspecialchars($success) ?>
             </div>
         <?php endif; ?>
@@ -101,9 +101,9 @@ $base_url = "$protocol://$host$base_dir/";
 
         <button type="submit">Créer mon compte</button>
 
-        <p style="text-align: center; margin-top: 1rem; color: #ccc;">
+        <p class="auth-switch">
           Vous avez déjà un compte ?
-          <a href="index.php" style="color: #fff; font-weight: bold; text-decoration: none;">Se connecter</a>
+          <a href="index.php">Se connecter</a>
         </p>
       </form>
     </div>

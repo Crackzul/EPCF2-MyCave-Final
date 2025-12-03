@@ -68,7 +68,7 @@ $base_url = "$protocol://$host$base_dir/";
       <form class="login-form" method="POST" action="index.php">
         <h2>Se connecter</h2>
         <?php if ($error): ?>
-            <div class="error-message" style="color: #ffb6c1; background: rgba(255,0,0,0.2); padding: 10px; border-radius: 5px; margin-bottom: 1rem; text-align: center;">
+            <div class="message error">
                 <?= htmlspecialchars($error) ?>
             </div>
         <?php endif; ?>
@@ -76,9 +76,9 @@ $base_url = "$protocol://$host$base_dir/";
         <input type="password" name="password" placeholder="Mot de passe" required>
         <button type="submit">Connexion</button>
 
-        <p style="text-align: center; margin-top: 1rem; color: #ccc;">
+        <p class="auth-switch">
           Vous n'avez pas encore de compte ?
-          <a href="register.php" style="color: #fff; font-weight: bold; text-decoration: none;">Créer un compte</a>
+          <a href="register.php">Créer un compte</a>
         </p>
       </form>
     </div>

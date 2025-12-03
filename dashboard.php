@@ -41,7 +41,7 @@ $wineCount = $wine->countByUserId($user['id']);
       <img src="assets/img/pexels-finn-ruijter-2153149058-32906672.jpg" alt="Image cave" class="cave-image">
     </div>
     <div class="wines-container" id="wines-container">
-      <div class="loading" style="text-align: center; color: white; font-size: 1.2rem; margin: 2rem;">
+      <div class="loading">
         Chargement de votre cave...
       </div>
     </div>
@@ -83,14 +83,14 @@ $wineCount = $wine->countByUserId($user['id']);
       
       if (wines.length === 0) {
         container.innerHTML = `
-          <div style="text-align: center; color: white; padding: 3rem;">
-            <h3 style="margin-bottom: 1rem;">Votre cave est vide</h3>
-            <p style="margin-bottom: 2rem;">Commencez par ajouter votre première bouteille !</p>
+          <div class="empty-state">
+            <h3>Votre cave est vide</h3>
+            <p>Commencez par ajouter votre première bouteille !</p>
             <button class="btn-primary" onclick="window.location.href='add-wine.php'">
               Ajouter une bouteille
             </button>
           </div>
-        `; // contenu pour cave vide
+        `;
         return;
       }
       

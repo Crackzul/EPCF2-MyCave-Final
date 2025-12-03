@@ -157,6 +157,25 @@
             background: rgba($color-white, 0.2);
             cursor: pointer;
           }
+
+          .current-picture {
+            margin-bottom: 0.5rem;
+
+            img {
+              max-width: 100px;
+              height: auto;
+              border-radius: 8px;
+            }
+
+            small {
+              display: block;
+              color: rgba($color-white, 0.8);
+            }
+          }
+
+          .hint-text {
+            color: rgba($color-white, 0.7);
+          }
         }
 
         .btn-submit {

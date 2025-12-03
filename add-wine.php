@@ -135,14 +135,14 @@ $wineCount = $wine->countByUserId($user['id']);
         <div class="form-group">
           <label>Photo</label>
           <?php if ($isEdit && $wineData['picture']): ?>
-          <div style="margin-bottom: 0.5rem;">
-            <img src="uploads/<?= htmlspecialchars($wineData['picture']) ?>" alt="Image actuelle" style="max-width: 100px; height: auto; border-radius: 8px;">
-            <small style="display: block; color: rgba(255,255,255,0.8);">Image actuelle</small>
+          <div class="current-picture">
+            <img src="uploads/<?= htmlspecialchars($wineData['picture']) ?>" alt="Image actuelle">
+            <small>Image actuelle</small>
           </div>
           <?php endif; ?>
           <input type="file" name="picture" accept="image/*">
           <?php if ($isEdit): ?>
-          <small style="color: rgba(255,255,255,0.7);">Laissez vide pour conserver l'image actuelle</small>
+          <small class="hint-text">Laissez vide pour conserver l'image actuelle</small>
           <?php endif; ?>
         </div>
 
