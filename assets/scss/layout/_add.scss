@@ -187,6 +187,125 @@
             flex-shrink: 0;
           }
         }
+
+        .region-select-group {
+          .region-label {
+            display: inline-block;
+            margin-bottom: 0.4rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+          }
+
+          .region-select-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: rgba($color-black, 0.2);
+            border: 1px solid rgba($color-white, 0.3);
+            border-radius: 10px;
+            padding: 0.2rem 0.75rem;
+
+            .region-select {
+              appearance: none;
+              background: transparent;
+              border: none;
+              color: $color-white;
+              width: 100%;
+              padding: 0.6rem 0;
+              font-size: 1rem;
+              font-weight: 600;
+
+              option {
+                color: $color-black;
+              }
+
+              &:focus {
+                outline: none;
+              }
+            }
+
+            .region-select-arrow {
+              width: 12px;
+              height: 12px;
+              border-right: 2px solid $color-white;
+              border-bottom: 2px solid $color-white;
+              transform: rotate(45deg);
+              margin-left: 0.5rem;
+              pointer-events: none;
+              transition: 0.2s ease;
+            }
+          }
+
+          &:focus-within {
+            .region-select-wrapper {
+              border-color: $color-white;
+              box-shadow: 0 0 0 3px rgba($color-white, 0.2);
+
+              .region-select-arrow {
+                transform: rotate(225deg);
+              }
+            }
+          }
+        }
+
+        .grape-list {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+          gap: 0.75rem;
+          background: rgba($color-black, 0.15);
+          padding: 1rem;
+          border-radius: 12px;
+          border: 1px solid rgba($color-white, 0.25);
+        }
+
+        .grape-option {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          font-weight: 600;
+          background: rgba($color-white, 0.05);
+          border: 1px solid rgba($color-white, 0.15);
+          padding: 0.5rem 0.75rem;
+          border-radius: 10px;
+          transition: 0.2s ease;
+
+          &:hover {
+            border-color: $color-white;
+            background: rgba($color-white, 0.12);
+          }
+
+          input[type='checkbox'] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba($color-white, 0.6);
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba($color-black, 0.2);
+            cursor: pointer;
+            transition: 0.2s ease;
+
+            &:checked {
+              background: $color-white;
+              border-color: $color-white;
+              box-shadow: 0 0 0 3px rgba($color-white, 0.3);
+
+              &::after {
+                content: '✓';
+                color: $color-primary;
+                font-size: 0.9rem;
+                font-weight: bold;
+              }
+            }
+          }
+
+          span {
+            flex: 1;
+            letter-spacing: 0.02em;
+          }
+        }
       }
     }
   }
