@@ -310,10 +310,8 @@
             cursor: pointer;
             transition: 0.2s ease;
             position: relative;
-            flex-shrink: 0;
             margin-left: 0;
             margin-right: 0.75rem;
-            align-self: center;
 
             &:checked {
               background: $color-white;

@@ -6,28 +6,39 @@ Version PHP dynamique avec base de données, authentification et API REST.
 
 ```
 MyCave/
-├── 📁 api/                 # API REST
-│   ├── auth.php           # Authentification (login, register, logout)
-│   └── wines.php          # CRUD des vins
-├── 📁 assets/             # Ressources statiques
-│   ├── css/style.css      # Styles compilés
-│   ├── img/               # Images et logos
-│   └── scss/              # Sources SCSS
-├── 📁 classes/            # Classes PHP
-│   ├── User.php           # Gestion des utilisateurs
-│   └── Wine.php           # Gestion des vins
-├── 📁 config/             # Configuration
-│   └── database.php       # Connexion base de données
-├── 📁 database/           # Base de données
-│   └── schema.sql         # Structure et données de test
-├── 📁 includes/           # Fichiers PHP réutilisables
-│   └── session.php        # Gestion des sessions
-├── 📁 uploads/            # Images uploadées
-├── dashboard.html         # 📊 Version statique (conservée)
-├── dashboard.php          # 📊 Version dynamique
-├── add.html              # ➕ Version statique (conservée)
-├── add-wine.php          # ➕ Version dynamique
-└── login.php             # 🔐 Authentification
+├── api/                 # API REST
+│   ├── reference.php    # Pays, régions, cépages (données de référence)
+│   └── wines.php        # CRUD des vins (JSON)
+├── assets/
+│   ├── css/style.css    # CSS compilé (depuis SCSS)
+│   ├── fonts/           # Police SourceSansPro
+│   ├── img/             # Illustrations et photos
+│   └── scss/
+│       ├── abstract/    # Variables, mixins
+│       ├── base/, components/, layout/, pages/
+│       └── style.scss   # Point d'entrée SASS
+├── classes/
+│   ├── User.php         # Authentification + rôles
+│   └── Wine.php         # Accès aux vins (PDO)
+├── config/
+│   └── database.php     # Connexion PDO (mycave_v2)
+├── database/
+│   ├── schema.sql       # Structure complète + seeds
+│   ├── seed_regions.sql # Référentiel régions/pays
+│   ├── remove_region_duplicates.sql
+│   └── *.sql            # Scripts d'entretien
+├── doc/                 # Docs projet (rapport, guides)
+├── includes/
+│   └── session.php      # Helpers de session PHP
+├── uploads/             # Photos uploadées
+├── add-wine.php         # Formulaire ajout/édition
+├── dashboard.php        # Vue principale après login
+├── index.php            # Connexion
+├── register.php         # Inscription
+├── logout.php           # Déconnexion
+├── ARCHITECTURE.md, README.md, etc.
+├── package.json         # Scripts SASS (npm)
+└── node_modules/        # Dépendances locales
 ```
 
 ## 🚀 Installation Rapide
@@ -116,7 +127,9 @@ chmod 777 uploads
 
 ### 🔌 API REST
 
-**Endpoint unique** : `/api/wines.php`
+Les endpoints courants sont :
+- `api/wines.php` : CRUD complet sur les bouteilles de l'utilisateur connecté (GET/POST/PUT/DELETE)
+- `api/reference.php` : expose les listes de pays, régions et cépages pour alimenter les formulaires
 
 #### Gestion des vins (`/api/wines.php`)
 ```bash
@@ -164,6 +177,19 @@ DELETE /api/wines.php?id=123
 - picture (VARCHAR(255))
 - created_at (TIMESTAMP)
 ```
+
+#### Maintenance des régions
+1. Nettoyer les doublons existants :
+```powershell
+cd C:\wamp64\www\Myv12
+git --no-pager diff database\remove_region_duplicates.sql # vérifier le script
+mysql -u root -p mycave_db < database\remove_region_duplicates.sql
+```
+2. Réimporter les régions de référence :
+```powershell
+mysql -u root -p mycave_db < database\seed_regions.sql
+```
+3. Synchroniser le front : récupérer les listes pays/régions via `api/reference.php` pour alimenter les sélecteurs et empêcher les saisies libres incohérentes.
 
 ## 🎯 URLs Principales
 
@@ -214,6 +240,13 @@ DELETE /api/wines.php?id=123
 - [ ] Export/Import de cave
 - [ ] Statistiques et graphiques
 - [ ] Notifications et rappels
+
+## ✨ Améliorations Rapides
+- **UX/Formulaire :** finaliser l'alignement flex des inputs, limiter la description (même nombre de caractères dans l'API et l'UI) et afficher un aperçu d'image instantané dans `add-wine.php`.
+- **SCSS cohérent :** centraliser couleurs/espacements dans `assets/scss/abstract/_variables.scss`, puis n'utiliser que ces tokens dans `components/_forms.scss` et `layout/_dashboard.scss` pour réduire la spécificité.
+- **Données fiables :** dédoublonner la table `region` avec `database/remove_region_duplicates.sql`, enrichir `database/seed_regions.sql` avec les pays 1=France, 2=Spain, 3=USA, 4=Italy, 6=Argentina, et exposer ces listes via `api/reference.php`.
+- **Performance légère :** activer `loading="lazy"` sur les cartes, ajouter une pagination simple côté `dashboard.php` et minifier `assets/css/style.css` via un script npm.
+- **Documentation :** compléter `ARCHITECTURE.md` et ce README avec les conventions SCSS/SQL pour que l'équipe suive le même flux.
 
 ## 🚨 Sécurité
 
